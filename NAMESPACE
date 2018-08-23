@@ -3,4 +3,5 @@
 export(edges2tree)
 export(firstlvldep)
 export(helper_pkgname_rawlink)
+export(nthlvldep)
 importFrom(utils,file_test)
