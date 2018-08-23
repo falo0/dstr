@@ -10,11 +10,12 @@ firstlvldep(githublink = NULL, localdir = NULL, includeRootPkg = F)
 \item{githublink}{A link to the package repository or directly to the description file}
 
 \item{localdir}{A directory to a locally stored package or directly to a DESCRIPTION file}
+
+\item{includeRootPkg}{Whether the output should be a list which also includes the name of the original package that is inspected}
 }
 \description{
 This function returns all first level packag dependencies from a package on github.
 }
 \examples{
 firstlvldep("https://github.com/tidyverse/ggplot2")
-firstlvldep(localdesdir = "~/Documents/myPackage/DESCRIPTION")
 }

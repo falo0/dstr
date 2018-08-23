@@ -2,3 +2,4 @@
 
 export(firstlvldep)
 export(helper_pkgname_rawlink)
+importFrom(utils,file_test)

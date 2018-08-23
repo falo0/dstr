@@ -10,8 +10,15 @@
 #' helper_pkgname_rawlink("https://github.com/falo0/dstr/blob/master/DESCRIPTION")
 
 helper_pkgname_rawlink <- function(githublink){
-  descdir <- regmatches(githublink, gregexpr("^(.*.com)",
-                                             githublink), invert = T)[[1]][2]
+
+  match <- regmatches(githublink, gregexpr("^(.*.com)",
+                                           githublink), invert = T)
+  if(length(match[[1]]) == 1){
+    descdir <- match[[1]]
+  } else {
+    descdir <- match[[1]][2]
+  }
+
   descdir <- sub("\\/blob","", descdir)
   pkgname <- descdir
   if (!grepl("/master", descdir)){
@@ -24,8 +31,15 @@ helper_pkgname_rawlink <- function(githublink){
   } else{
     pkgname <- sub("\\/DESCRIPTION","", pkgname)
   }
+
+  if(!grepl("^\\/", descdir)){
+    # if descdir should not start with "/", add it so it can be attached to the
+    # github link below
+    descdir <- paste0("/", descdir)
+  }
+
   githublink <- paste0("https://raw.githubusercontent.com", descdir)
-  
+
   pkgname <- regmatches(pkgname, gregexpr("^(.*\\/)",
                                           pkgname), invert = T)[[1]][2]
   c(pkgname = pkgname, rawlink = githublink)

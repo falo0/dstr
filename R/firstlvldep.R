@@ -3,10 +3,11 @@
 #' This function returns all first level packag dependencies from a package on github.
 #' @param githublink A link to the package repository or directly to the description file
 #' @param localdir A directory to a locally stored package or directly to a DESCRIPTION file
+#' @param includeRootPkg Whether the output should be a list which also includes the name of the original package that is inspected
 #' @export
+#' @importFrom utils file_test
 #' @examples
 #' firstlvldep("https://github.com/tidyverse/ggplot2")
-#' firstlvldep(localdesdir = "~/Documents/myPackage/DESCRIPTION")
 
 
 firstlvldep <- function(githublink = NULL, localdir = NULL, includeRootPkg = F){
@@ -18,17 +19,13 @@ firstlvldep <- function(githublink = NULL, localdir = NULL, includeRootPkg = F){
     pkgname <- "RootPKG"
 
     if (file_test("-f", localdir)){
-      #print("hi")
-      #print(localdir)
-      #print(getwd())
       # the localdir leads directly to a file (asumption: a description file)
       descfile <- readLines(localdir)
-      #print(descfile)
-    } else {
-      #print("unten")
-      #print(localdir)
+    } else if(dir.exists(localdir)){
       # localdir leads to a folder (assumption: folder of the package)
       descfile <- readLines(paste0(localdir, "/DESCRIPTION"))
+    } else{
+      stop("No such file ore directory")
     }
 
   }
@@ -78,8 +75,6 @@ firstlvldep <- function(githublink = NULL, localdir = NULL, includeRootPkg = F){
     charVec <- charVec[charVec != ""]
     # remove the "R" entry because that's not a package
     charVec <- charVec[charVec != "R"]
-
-    charVec
   }
 
   depends <- parsefurther(depends)
