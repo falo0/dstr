@@ -37,14 +37,14 @@ nthlvldep <- function(pkg, outtype = "edge_list"){
   }
 
   bigmat <- available.packages()  #have to check if Git Hub repository
-
+  deplevels <- c("Imports","Depends")
 
   edge.list <- function(pkg, recursive = T,
                         which = c("Imports","Depends"), includebasepkgs = F){
 
 
     #create a vector of all needed packages (the vertices)
-    all.pkgs <- tools::package_dependencies(pkg, recursive = recursive, which= deplevels, db=bigmat)
+    all.pkgs <- tools::package_dependencies(pkg, recursive = recursive, which = c("Imports","Depends"), db=bigmat)
     all.pkgs <- as.vector(unique(unlist(lapply(all.pkgs,rbind))))
     if (length(all.pkgs)==0){
       if (length(pkg)>1){
