@@ -2,37 +2,35 @@
 #'
 #' This function returns all first level packag dependencies from a package on github.
 #' @param githublink A link to the package repository or directly to the description file
-#' @param localdescdir A directory to a local DESCRIPTION file
+#' @param localdir A directory to a locally stored package or directly to a DESCRIPTION file
 #' @export
 #' @examples
 #' firstlvldep("https://github.com/tidyverse/ggplot2")
 #' firstlvldep(localdesdir = "~/Documents/myPackage/DESCRIPTION")
 
 
-firstlvldep <- function(githublink = NULL, localdescdir = NULL){
+firstlvldep <- function(githublink = NULL, localdir = NULL, includeRootPkg = F){
   if(!is.null(githublink)){
-    descdir <- regmatches(githublink, gregexpr("^(.*.com)",
-                                               githublink), invert = T)[[1]][2]
-    descdir <- sub("\\/blob","", descdir)
-    pkgname <- descdir
-    if (!grepl("/master", descdir)){
-      descdir <- paste0(descdir, "/master")
-    } else{
-      pkgname <- sub("\\/master","", pkgname)
-    }
-    if (!grepl("/DESCRIPTION", descdir)){
-      descdir <- paste0(descdir, "/DESCRIPTION")
-    } else{
-      pkgname <- sub("\\/DESCRIPTION","", pkgname)
-    }
-    githublink <- paste0("https://raw.githubusercontent.com", descdir)
-
-    pkgname <- regmatches(pkgname, gregexpr("^(.*\\/)",
-                                    pkgname), invert = T)[[1]][2]
-    descfile <- readLines(githublink)
+    res <- helper_pkgname_rawlink(githublink)
+    pkgname <- res[1]
+    descfile <- readLines(res[2])
   } else {
     pkgname <- "RootPKG"
-    descfile <- readLines(localdescdir)
+
+    if (file_test("-f", localdir)){
+      #print("hi")
+      #print(localdir)
+      #print(getwd())
+      # the localdir leads directly to a file (asumption: a description file)
+      descfile <- readLines(localdir)
+      #print(descfile)
+    } else {
+      #print("unten")
+      #print(localdir)
+      # localdir leads to a folder (assumption: folder of the package)
+      descfile <- readLines(paste0(localdir, "/DESCRIPTION"))
+    }
+
   }
 
 
@@ -87,5 +85,9 @@ firstlvldep <- function(githublink = NULL, localdescdir = NULL){
   depends <- parsefurther(depends)
   imports <- parsefurther(imports)
 
-  list(pkgname = pkgname, firstlvldep = c(depends, imports))
+  if(includeRootPkg){
+    return(list(lvl0 = pkgname, lvl1 = c(depends, imports)))
+  } else {
+    return(c(depends, imports))
+  }
 }

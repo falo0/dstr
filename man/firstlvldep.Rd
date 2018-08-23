@@ -4,16 +4,17 @@
 \alias{firstlvldep}
 \title{First Level Dependencies}
 \usage{
-firstlvldep(githublink = NULL, localdescdir = NULL)
+firstlvldep(githublink = NULL, localdir = NULL, includeRootPkg = F)
 }
 \arguments{
 \item{githublink}{A link to the package repository or directly to the description file}
 
-\item{localdescdir}{A directory to a local DESCRIPTION file}
+\item{localdir}{A directory to a locally stored package or directly to a DESCRIPTION file}
 }
 \description{
 This function returns all first level packag dependencies from a package on github.
 }
 \examples{
 firstlvldep("https://github.com/tidyverse/ggplot2")
+firstlvldep(localdesdir = "~/Documents/myPackage/DESCRIPTION")
 }
