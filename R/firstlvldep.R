@@ -29,8 +29,6 @@ firstlvldep <- function(githublink = NULL, localdir = NULL, includeRootPkg = F){
     }
 
   }
-
-
   imports <- character()
   depends <- character()
   rangeOfImports <- F
