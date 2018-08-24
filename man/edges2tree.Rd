@@ -8,13 +8,16 @@ edges2tree(edges, lvl1deps)
 }
 \arguments{
 \item{edges}{An edge list as a data frame, first column: starting points, second columns: end points}
+
+\item{lvl1deps}{The packages that should be at the first level (at the roots) of the tree structure}
 }
 \description{
-This helper function inputs an edge list and converts it into a data frame 
+This helper function inputs an edge list and converts it into a data frame
 where the whole tree structure can be seen.
 }
 \examples{
-edgelist <- data.frame(start = c("shiny", "shiny", "htmltools"), end = c("jsonlite", "htmltools", "digest"))
+edgelist <- data.frame(start = c("shiny", "shiny", "htmltools"),
+   end = c("jsonlite", "htmltools", "digest"))
 lvl1deps <- "shiny"
 edges2tree(edgelist, lvl1deps)
 }

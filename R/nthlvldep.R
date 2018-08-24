@@ -19,6 +19,7 @@
 #' tree: Detailed information about which package depends on which, represented
 #' in a data frame that is showing a tree structure.
 #' @export
+#' @importFrom utils available.packages installed.packages
 
 
 nthlvldep <- function(pkg, outtype = "edge_list"){

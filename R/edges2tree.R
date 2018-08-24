@@ -1,22 +1,24 @@
 #' Convert Edge List To Data Frame With Tree Structure
 #'
-#' This helper function inputs an edge list and converts it into a data frame 
+#' This helper function inputs an edge list and converts it into a data frame
 #' where the whole tree structure can be seen.
 #' @param edges An edge list as a data frame, first column: starting points, second columns: end points
+#' @param lvl1deps The packages that should be at the first level (at the roots) of the tree structure
 #' @export
 #' @examples
-#' edgelist <- data.frame(start = c("shiny", "shiny", "htmltools"), end = c("jsonlite", "htmltools", "digest"))
+#' edgelist <- data.frame(start = c("shiny", "shiny", "htmltools"),
+#'    end = c("jsonlite", "htmltools", "digest"))
 #' lvl1deps <- "shiny"
 #' edges2tree(edgelist, lvl1deps)
 
 edges2tree <- function(edges, lvl1deps){
-  
+
   edges <- unique(edges)
-  
+
   # Initialization
   treeDF <- data.frame(NA,lvl1deps)
   tempDFs <- list()
-  
+
   while(!all(is.na(treeDF[,2]))){
     parents <- as.character(treeDF[,2])
     treeDF <- data.frame(matrix(ncol = 2, nrow = 0))
@@ -38,26 +40,26 @@ edges2tree <- function(edges, lvl1deps){
     treeDF[] <- lapply(treeDF, as.character)
     tempDFs[[length(tempDFs)+1]] <- treeDF
   }
-  # remove last tempDF because it contains only NAs in the second column 
+  # remove last tempDF because it contains only NAs in the second column
   # we needed that to know that there are no deeper level dependencies
   # but we don't want to include it in the final data frame.
   tempDFs <- tempDFs[-length(tempDFs)]
-  
+
   # merge the tempDFs into one treeDF
   # Dimensions of final treeDF
   n_terminalnodes <- nrow(tempDFs[[length(tempDFs)]])
   n_levels <- length(tempDFs)
-  
+
   # Merging the data frames
   #Initializing
   old <- tempDFs[[1]]
-  
+
   for(j in 1:(n_levels-1)){
     #j = 1
     new <- tempDFs[[j+1]]
     #treeDF[1:nrow(old), 1:ncol(old)] <- old
     #treeDF
-    
+
     i = 1
     while(i <= nrow(new)){
       #print(i)
@@ -87,22 +89,22 @@ edges2tree <- function(edges, lvl1deps){
         # manually increase i so that no steps are taken more times than they should
         i = i + length(children)-1
       }
-      
+
       #old
       i = i + 1
-      
+
     }
     rownames(old) <- NULL
     #nrow(old)
     #nrow(new)
-    
+
     treeDF <- old
     treeDF[,2+j] <- new[,2]
     #treeDF
     old <- treeDF
   }
 
-  
+
   treeDF <- old
   colnames(treeDF) <- sapply(1:n_levels, function(i){paste0("lvl", i)})
   rownames(treeDF) <- NULL
