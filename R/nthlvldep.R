@@ -1,4 +1,4 @@
-#' Get All Depper Level Dependencies
+#' Get All Deeper Level Dependencies
 #'
 #' This function inputs a list of packages, regarded to as fist level
 #' dependencies. It outputs the dependencies, dependencies of dependencies, ...
@@ -9,23 +9,25 @@
 #' dependencies. This list will be added to the first level dependencies
 #' of a given package on github it githublink is set
 #' @param outtype Possible output types:
-#' edgelist: An edge list, e.g. to be used for network plots
-#' edgelistdetailed: An edge list, e.g. to be used for network plots, including
+#' \itemize{
+#' \item edgelist: An edge list, e.g. to be used for network plots
+#' \item edgelistdetailed: An edge list, e.g. to be used for network plots, including
 #' information on the type of dependency
-#' allpackages: An overview of all packages that are eventually loaded. No further
+#' \item allpackages: An overview of all packages that are eventually loaded. No further
 #' structure visible
-#' list: More detailed than allPKs, it's a list tha containns all packages per
+#' \item list: More detailed than allPKs, it's a list tha containns all packages per
 #' first level dependency
-#' uniquelist: like "list", just excluding all packages, that are eventually
+#' \item uniquelist: like "list", just excluding all packages, that are eventually
 #' also loaded by another package in firstlvldep. This way you can see which
 #' dependencies will be removed completely if you remove a certain first level
 #' dependency (a package that you import).
-#' tree: Detailed information about which package depends on which, represented
+#' \item tree: Detailed information about which package depends on which, represented
 #' in a data frame that is showing a tree structure.
-#' firstlvlpkgs: The vector of packages used as input. This is a combination
+#' \item firstlvlpkgs: The vector of packages used as input. This is a combination
 #' when both the githublink and the pkg parameter are set.
-#' rootpackage: Whether to include the name of the package of the given
+#' \item rootpackage: Whether to include the name of the package of the given
 #' github link. Returns "Root Package" when no github link was given
+#' }
 #' @param includebasepkgs Whether to include base packages in the analysis or not
 #' @param recursive Whether you want to look deeper than the second level of dependencies,
 #' e.g. get all dependencies of dependencies of dependencies ...
