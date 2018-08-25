@@ -30,7 +30,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
                      outtype = c("edgelistdetailed","allpackages",
                                  "firstlvlpkgs", "rootpackage"))
 
-  all.data <- data[[1]]
+  all.edges <- data[[1]]
   names(all.edges) <- c("start.vertex", "end.vertex", "dependencies")
   all.vertices <- data[[2]]
   firstlvl_vertices <- data[[3]]
