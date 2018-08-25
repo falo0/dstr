@@ -1,17 +1,16 @@
 Package: dstr
-Type: Package
 Title: Effectively reducing package dependencies in own r projects
 Version: 0.1.0
-Author: Olaf Menssen, Christoph Albers
-Maintainer: ###################################
+Authors@R: c(
+	person("Olaf", "Menssen", email = "o.menssen@me.com", role = c("aut", "cre")),
+	person("Christoph", "Albers", email = "christoph.albers01@stud.uni-goettingen.de", role = c("aut"))
+	)
 Description: Provides the user with helpful tools for managing the dependency structure
-of his own package and helps him identifying not necessarily needed packages.
+	of his own package and helps him identifying not necessarily needed packages.
+Depends: R (>= 3.4.2)
+Imports: igraph (>= 1.2.1)
 License: GPL-2
 Encoding: UTF-8
-LazyData: FALSE
-Imports:
-  igraph (>=1.2.1)
-  utils
-  tools
-Depends:
-  R (>=3.4.4)
+LazyData: true
+RoxygenNote: 6.1.0.9000
+Suggests: testthat

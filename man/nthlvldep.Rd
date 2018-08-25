@@ -4,24 +4,42 @@
 \alias{nthlvldep}
 \title{Get All Depper Level Dependencies}
 \usage{
-nthlvldep(pkg, outtype = "edge_list")
+nthlvldep(githublink = NULL, pkg = NULL, outtype,
+  includebasepkgs = F, recursive = T, which = c("Imports",
+  "Depends"))
 }
 \arguments{
+\item{githublink}{A link to a github repository of an R package}
+
 \item{pkg}{A list of packages from which we want to know the further
-dependencies}
+dependencies. This list will be added to the first level dependencies
+of a given package on github it githublink is set}
 
 \item{outtype}{Possible output types:
-edge_list: An edge list, e.g. to be used for network plots
-allPkgs: An overview of all packages that are eventually loaded. No further
+edgelist: An edge list, e.g. to be used for network plots
+edgelistdetailed: An edge list, e.g. to be used for network plots, including
+information on the type of dependency
+allpackages: An overview of all packages that are eventually loaded. No further
 structure visible
 list: More detailed than allPKs, it's a list tha containns all packages per
 first level dependency
-unique_list: like "list", just excluding all packages, that are eventually
+uniquelist: like "list", just excluding all packages, that are eventually
 also loaded by another package in firstlvldep. This way you can see which
 dependencies will be removed completely if you remove a certain first level
 dependency (a package that you import).
 tree: Detailed information about which package depends on which, represented
-in a data frame that is showing a tree structure.}
+in a data frame that is showing a tree structure.
+firstlvlpkgs: The vector of packages used as input. This is a combination
+when both the githublink and the pkg parameter are set.
+rootpackage: Whether to include the name of the package of the given
+github link. Returns "Root Package" when no github link was given}
+
+\item{includebasepkgs}{Whether to include base packages in the analysis or not}
+
+\item{recursive}{Whether you want to look deeper than the second level of dependencies,
+e.g. get all dependencies of dependencies of dependencies ...}
+
+\item{which}{What type of depencencies are regarded}
 }
 \description{
 This function inputs a list of packages, regarded to as fist level
