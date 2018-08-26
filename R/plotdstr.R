@@ -94,7 +94,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
        edge.width = 1.5 , main = "Dependency Graph",
        frame = T, edge.curved = curve_multiple(net,start = 1) #falls wir noch suggests hinzuf?gen und es doppelte pfeile von v1 zu v2 gibt
        , layout = l, vertex.label.cex = V(net)$label.cex)
-  mtext(paste("Number of packages: ",length(all.vertices)), side=1, line=0, adj=1, cex=0.75)
+  mtext(paste("Please enlarge this plot. Number of packages: ",length(all.vertices)), side=1, line=0, adj=1, cex=0.75)
 }
 
 #plotdstr(pkg = frst, recursive = T, includebasePkgs = F)

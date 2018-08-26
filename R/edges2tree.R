@@ -13,102 +13,106 @@
 
 edges2tree <- function(edges, lvl1deps){
 
-  edges <- unique(edges)
+  if(length(lvl1deps) > 0){
+    edges <- unique(edges)
 
-  # Initialization
-  treeDF <- data.frame(NA,lvl1deps)
-  tempDFs <- list()
+    # Initialization
+    treeDF <- data.frame(NA,lvl1deps)
+    tempDFs <- list()
 
-  while(!all(is.na(treeDF[,2]))){
-    parents <- as.character(treeDF[,2])
-    treeDF <- data.frame(matrix(ncol = 2, nrow = 0))
-    for(i in 1:length(parents)){
-      parent <- parents[i]
-      children <- edges$end[edges$start == parent]
-      if(length(children) == 0){
-        children <- NA
-        #print("hier")
-      } else if (is.na(children[1])){
-        children <- NA
-        #print("unten")
+    while(!all(is.na(treeDF[,2]))){
+      parents <- as.character(treeDF[,2])
+      treeDF <- data.frame(matrix(ncol = 2, nrow = 0))
+      for(i in 1:length(parents)){
+        parent <- parents[i]
+        children <- edges$end[edges$start == parent]
+        if(length(children) == 0){
+          children <- NA
+          #print("hier")
+        } else if (is.na(children[1])){
+          children <- NA
+          #print("unten")
+        }
+        newDF <- data.frame(rep(parent, length(children)),children)
+        treeDF <- rbind(treeDF, newDF)
       }
-      newDF <- data.frame(rep(parent, length(children)),children)
-      treeDF <- rbind(treeDF, newDF)
+      # Convert all factors to characters because the factors lead to problems
+      # at several points:
+      treeDF[] <- lapply(treeDF, as.character)
+      tempDFs[[length(tempDFs)+1]] <- treeDF
     }
-    # Convert all factors to characters because the factors lead to problems
-    # at several points:
-    treeDF[] <- lapply(treeDF, as.character)
-    tempDFs[[length(tempDFs)+1]] <- treeDF
-  }
-  # remove last tempDF because it contains only NAs in the second column
-  # we needed that to know that there are no deeper level dependencies
-  # but we don't want to include it in the final data frame.
-  tempDFs <- tempDFs[-length(tempDFs)]
+    # remove last tempDF because it contains only NAs in the second column
+    # we needed that to know that there are no deeper level dependencies
+    # but we don't want to include it in the final data frame.
+    tempDFs <- tempDFs[-length(tempDFs)]
 
-  # merge the tempDFs into one treeDF
-  # Dimensions of final treeDF
-  n_terminalnodes <- nrow(tempDFs[[length(tempDFs)]])
-  n_levels <- length(tempDFs)
+    # merge the tempDFs into one treeDF
+    # Dimensions of final treeDF
+    n_terminalnodes <- nrow(tempDFs[[length(tempDFs)]])
+    n_levels <- length(tempDFs)
 
-  # Merging the data frames
-  #Initializing
-  old <- tempDFs[[1]]
+    # Merging the data frames
+    #Initializing
+    old <- tempDFs[[1]]
 
-  for(j in 1:(n_levels-1)){
-    #j = 1
-    new <- tempDFs[[j+1]]
-    #treeDF[1:nrow(old), 1:ncol(old)] <- old
-    #treeDF
+    for(j in 1:(n_levels-1)){
+      #j = 1
+      new <- tempDFs[[j+1]]
+      #treeDF[1:nrow(old), 1:ncol(old)] <- old
+      #treeDF
 
-    i = 1
-    while(i <= nrow(new)){
-      #print(i)
-      #i=25
-      parent <- as.character(old[i,1+j])
-      if(!is.na(any(new[,1] == parent))){
-        if(any(new[,1] == parent)){
-          children <- new[,2][new[,1] == parent & !is.na(new[,1])]
-          children <- unique(children)
+      i = 1
+      while(i <= nrow(new)){
+        #print(i)
+        #i=25
+        parent <- as.character(old[i,1+j])
+        if(!is.na(any(new[,1] == parent))){
+          if(any(new[,1] == parent)){
+            children <- new[,2][new[,1] == parent & !is.na(new[,1])]
+            children <- unique(children)
+          } else {
+            children <- NA
+          }
         } else {
           children <- NA
         }
-      } else {
-        children <- NA
-      }
-      # Insert the currently observed row directly under itself, so that it is copied
-      # as many times as there are children
-      if(length(children) > 1){
-        for(c in 1:(length(children)-1)){
-          if(i < nrow(old)){
-            old <- rbind(old[1:i,], old[i,], old[(i+1):nrow(old),])
-          } else {
-            # if we are in the last row of old
-            old <- rbind(old[1:i,], old[i,])
+        # Insert the currently observed row directly under itself, so that it is copied
+        # as many times as there are children
+        if(length(children) > 1){
+          for(c in 1:(length(children)-1)){
+            if(i < nrow(old)){
+              old <- rbind(old[1:i,], old[i,], old[(i+1):nrow(old),])
+            } else {
+              # if we are in the last row of old
+              old <- rbind(old[1:i,], old[i,])
+            }
           }
+          # manually increase i so that no steps are taken more times than they should
+          i = i + length(children)-1
         }
-        # manually increase i so that no steps are taken more times than they should
-        i = i + length(children)-1
+
+        #old
+        i = i + 1
+
       }
+      rownames(old) <- NULL
+      #nrow(old)
+      #nrow(new)
 
-      #old
-      i = i + 1
-
+      treeDF <- old
+      treeDF[,2+j] <- new[,2]
+      #treeDF
+      old <- treeDF
     }
-    rownames(old) <- NULL
-    #nrow(old)
-    #nrow(new)
+
 
     treeDF <- old
-    treeDF[,2+j] <- new[,2]
-    #treeDF
-    old <- treeDF
+    colnames(treeDF) <- sapply(1:n_levels, function(i){paste0("lvl", i)})
+    rownames(treeDF) <- NULL
+    return(treeDF)
+  } else {
+    return(data.frame())
   }
-
-
-  treeDF <- old
-  colnames(treeDF) <- sapply(1:n_levels, function(i){paste0("lvl", i)})
-  rownames(treeDF) <- NULL
-  treeDF
 }
 
 #edges <- read.csv("tests/testthat/test_files/GREA_edges.csv")

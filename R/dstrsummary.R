@@ -13,8 +13,16 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
   #githublink <- "tidyverse/ggplot2"
   #githublink <- "Stan125/GREA"
 
-  data <- nthlvldep(githublink, pkg, c("firstlvlpkgs", "allpackages", "uniquelist", "list"))
+  data <- nthlvldep(githublink, pkg, c("firstlvlpkgs", "allpackages", "uniquelist", "list", "rootpackage"))
+  if(is.null(githublink)){
+    print("DEPENDENCY ANALYSIS")
+  } else if(is.null(pkg)){
+    print(paste0("'", data[[5]], "' DEPENDENCY ANALYSIS"))
+  } else {
+    print(paste0("'", data[[5]], " + pkg", "' DEPENDENCY ANALYSIS"))
+  }
 
+  print("###############")
 
   print("First Level Packages:")
   print(data[[1]])
@@ -25,7 +33,7 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
   print("--------------------")
 
 
-  print("Opportunities To Eliminate Packages:")
+  print("Opportunities To Reduce Dependencies:")
   uniquelist <- data[[3]]
   dlist <- data[[4]]
 
@@ -62,7 +70,11 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
     }
   }
 
-
+  print("--------------")
+  print("Hard to remove/ Interdependencies (optional?)")
+  print("The packages x, y, z are loaded by your first lvl packages a, b, c")
+  print("The packages g, h, i are loaded by your first lvl packages a, c")
+  print("The package f is loaded by your first lvl packages a, b")
 
   #writeLines(c("First Level Packages",
   #             data[[1]],

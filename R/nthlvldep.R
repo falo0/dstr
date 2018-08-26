@@ -40,6 +40,19 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
                       includebasepkgs = F, recursive = T,
                       which = c("Imports", "Depends")){
 
+
+  # ------- For testing only ---
+  #githublink = "Stan125/GREA"
+  #pkg = NULL
+  #recursive = T
+  #includebasepkgs = F
+  #deplevels <- which ???
+  # ----------------------------
+  deplevels <- c("Imports","Depends")
+
+
+  bigmat <- available.packages()  #have to check if Git Hub repository
+
   if(is.null(pkg) & is.null(githublink)){
     stop("You have to specify at least one of the two: pkg, githublink")
   } else if (!is.null(githublink) & is.null(pkg)){
@@ -51,7 +64,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     # both a githublink and a vector of packges where given, e.g. to test
     # what would happen if a certain package would also import the given vector
     # of packages
-    pkg <- unique(c(firstlvldep(githublink), pkg))
+    res <- firstlvldep(githublink, includeRootPkg = T)
+    rootPkgName <- unname(res[[1]])
+    pkg <- unique(c(res[[2]], pkg))
   }
 
   #read the list of base packages
@@ -63,22 +78,11 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     pkg <- used.pkgs[used.pkgs %in% base.pkgs == F]
   }
 
-  bigmat <- available.packages()  #have to check if Git Hub repository
-  deplevels <- c("Imports","Depends")
-  #recursive <- T
-  #which <- deplevels
-  #includebasepkgs <- F
 
   #create a vector of all needed packages (the vertices)
-  all.pkgs <- tools::package_dependencies(pkg, recursive = recursive, which = deplevels, db=bigmat)
-  all.pkgs <- as.vector(unique(unlist(lapply(all.pkgs,rbind))))
-  if (length(all.pkgs)==0){
-    if (length(pkg)>1){
-      stop("Your packages have no further dependencies")
-    } else {
-      stop("Your package has no further dependencies")
-    }
-  }
+  frstlvllist <- tools::package_dependencies(pkg, recursive = recursive, which = deplevels, db=bigmat)
+  all.pkgs <- unique(unname(unlist(frstlvllist)))
+
   all.pkgs <- c(pkg,all.pkgs)
 
 
@@ -103,14 +107,17 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     }
   }
 
-
   # combine the small dataframes for each package to one edgelist
-  if (recursive == T){
-    result.df <-do.call(rbind,lapply(all.pkgs, level_pkg))
+  if(length(all.pkgs > 0)){
+    if (recursive == T){
+      result.df <-do.call(rbind,lapply(all.pkgs, level_pkg))
+    } else {
+
+      result.df <-do.call(rbind,lapply(pkg, level_pkg))
+    }
   } else {
-
-    result.df <-do.call(rbind,lapply(pkg, level_pkg))
-
+    # There are no dependencies at all, return an empty data frame (and not NULL)
+    result.df <- data.frame("start" = character(),"end" = character(), "dependency" = character())
   }
   row.names(result.df) <- NULL
 
@@ -121,6 +128,20 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     all.pkgs <- subset(all.pkgs, !(all.pkgs %in% base.pkgs))
   }
 
+  create_unique_list <- function(frstlvllist){
+    if(length(frstlvllist) >= 1){
+      uniquelist <- list()
+      for(i in 1:length(frstlvllist)){
+        everythingelse <- unname(unlist(frstlvllist[-i]))
+        uniquelist[[i]] <- setdiff(frstlvllist[[i]], everythingelse)
+      }
+      names(uniquelist) <- pkg
+      return(uniquelist)
+    } else {
+      return(frstlvllist)
+    }
+  }
+
   if(length(outtype) == 1){
     if(outtype == "edgelist"){
       return(result.df[,-3])
@@ -129,16 +150,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     } else if (outtype == "allpackages"){
       return(all.pkgs)
     } else if (outtype == "list"){
-      return(tools::package_dependencies(pkg, recursive = T , which = deplevels, db=bigmat))
+      return(frstlvllist)
     } else if (outtype == "uniquelist"){
-      list <- tools::package_dependencies(pkg, recursive = T , which = deplevels, db=bigmat)
-      uniquelist <- list()
-      for(i in 1:length(list)){
-        everythingelse <- unname(unlist(list[-i]))
-        uniquelist[[i]] <- setdiff(list[[i]], everythingelse)
-      }
-      names(uniquelist) <- pkg
-      return(uniquelist)
+      return(create_unique_list(frstlvllist))
     } else if (outtype == "tree"){
       treeDF <- edges2tree(result.df[,-3], lvl1deps = pkg)
       # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
@@ -173,17 +187,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
       } else if (outtype[i] == "allpackages"){
         outlist[[length(outlist)+1]] <- all.pkgs
       } else if (outtype[i] == "list"){
-        outlist[[length(outlist)+1]] <- tools::package_dependencies(pkg,
-                                  recursive = T , which = deplevels, db=bigmat)
+        outlist[[length(outlist)+1]] <- frstlvllist
       } else if (outtype[i] == "uniquelist"){
-        list <- tools::package_dependencies(pkg, recursive = T , which = deplevels, db=bigmat)
-        uniquelist <- list()
-        for(i in 1:length(list)){
-          everythingelse <- unname(unlist(list[-i]))
-          uniquelist[[i]] <- setdiff(list[[i]], everythingelse)
-        }
-        names(uniquelist) <- pkg
-        outlist[[length(outlist)+1]] <- uniquelist
+        outlist[[length(outlist)+1]] <- create_unique_list(frstlvllist)
       } else if (outtype[i] == "tree"){
         treeDF <- edges2tree(result.df[,-3], lvl1deps = pkg)
         # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
