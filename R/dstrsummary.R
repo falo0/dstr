@@ -71,7 +71,7 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
   }
 
   print("--------------")
-  print("Hard to remove/ Interdependencies (optional?)")
+  print("Shared Dependencies / Hard to remove (optional?)")
   print("The packages x, y, z are loaded by your first lvl packages a, b, c")
   print("The packages g, h, i are loaded by your first lvl packages a, c")
   print("The package f is loaded by your first lvl packages a, b")
