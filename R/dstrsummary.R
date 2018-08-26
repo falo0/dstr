@@ -1,3 +1,12 @@
+#' Dependency Summary
+#'
+#' This function gives a summary of the dependency structure of a given package
+#' and points out opportunities to eliminate depdendenceis completely.
+#' @param githublink A link to a github repository of an R package
+#' @param pkg A list of packages from which we want to know the further
+#' dependencies. This list will be added to the first level dependencies
+#' of a given package on github it githublink is set
+
 dstrsummary <- function(githublink = NULL, pkg = NULL){
   #pkg <- NULL
   #githublink <- "tidyverse/ggplot2"
