@@ -8,35 +8,32 @@
 #' @param includebasepkgs Whether to include base packages in the analysis or not
 #' @param recursive Whether you want to look deeper than the second level of dependencies,
 #' e.g. get all dependencies of dependencies of dependencies ...
-#' @param which What type of depencencies are regarded
 #' @import igraph
 #' @export
 #' @importFrom graphics mtext plot
 
-plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive = T,
-                     which = c("Imports", "Depends")){
+plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive = T){
   #pkg <- frst
   #recursive <- T
   #includebasePkgs <- F
-  #deplevels <- c("Imports", "Depends")
+  deplevels <- c("Imports", "Depends")
   #githublink <- "tidyverse/ggplot2"
   #githublink <- NULL
   bigmat <- available.packages()
 
   #Create the edgelists
   data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
-                     which = which,
                      includebasepkgs = includebasepkgs,
                      outtype = c("edgelistdetailed","allpackages",
                                  "firstlvlpkgs", "rootpackage"))
 
-  all.edges <- data[[1]]
-  names(all.edges) <- c("start.vertex", "end.vertex", "dependencies")
-  all.vertices <- data[[2]]
+  all_edges <- data[[1]]
+  names(all_edges) <- c("start.vertex", "end.vertex", "dependencies")
+  all_vertices <- data[[2]]
   firstlvl_vertices <- data[[3]]
   github_pkg <- data[[4]]
 
-  if (nrow(all.edges) == 0) {
+  if (nrow(all_edges) == 0) {
     stop(("There are no dependencies"))
     # Feature request: Is it possible to only draw the packages in "pkg"
     # (which are not connected to anything of course) and then give this warning?
@@ -46,8 +43,8 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   }
 
   #identify first level dependencies
-  firstlvl <- all.edges$start.vertex %in% pkg
-  all.edges$firstlevel <- firstlvl
+  firstlvl <- all_edges$start.vertex %in% pkg
+  all_edges$firstlevel <- firstlvl
 
   # Ich glaube daruf geht der Code weiter unten schon ein, bin mir nicht ganz sicher:
   # Es kann auch first level packages geben, die selbst keine depencendies haben
@@ -61,10 +58,10 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   # packages an verschiedenen Levels geladen wird. K.p. ob in solchen Fällen
   # der netplot anders aussehen müsste. Als Quickfix habe ich erstmal unique
   # genommen
-  uniqueVertices <- unique(all.vertices) # <- DAUERLÖSUNG??
+  uniqueVertices <- unique(all_vertices) # <- DAUERLÖSUNG??
 
 
-  net <- graph_from_data_frame(d=all.edges, vertices = uniqueVertices, directed = T)
+  net <- graph_from_data_frame(d=all_edges, vertices = uniqueVertices, directed = T)
 
 
   l <- layout_with_fr(net) * 2 #define the network algortihm to the "Fruchterman Reingold"-Algorithm
@@ -81,20 +78,20 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   }
 
   #check if there are unidentified packages
-  lonely.vertices <- V(net)$name[degree(net, mode="all")==0]
-  if (length(lonely.vertices >  0)){
-    for (i in  1:length(lonely.vertices)){
-      if(!(lonely.vertices[i] %in% bigmat[,1])){
-        warning(paste0("Package ",lonely.vertices[i]," can't be found in repository. Are you sure you entered the packagename correctly?"))
+  lonely_vertices <- V(net)$name[degree(net, mode="all")==0]
+  if (length(lonely_vertices >  0)){
+    for (i in  1:length(lonely_vertices)){
+      if(!(lonely_vertices[i] %in% bigmat[,1])){
+        warning(paste0("Package ",lonely_vertices[i]," can't be found in repository. Are you sure you entered the packagename correctly?"))
       }
     }
   }
   plot(net, edge.arrow.size = .1, edge.color="darkgrey",vertex.size = 10, vertex.shape = "none",
        vertex.frame.color = "white", vertex.label.font= 1, vertex.label.color = V(net)$vcolor,
        edge.width = 1.5 , main = "Dependency Graph",
-       frame = T, edge.curved = curve_multiple(net,start = 1) #falls wir noch suggests hinzuf?gen und es doppelte pfeile von v1 zu v2 gibt
+       frame = T
        , layout = l, vertex.label.cex = V(net)$label.cex)
-  mtext(paste("Please enlarge this plot. Number of packages: ",length(all.vertices)), side=1, line=0, adj=1, cex=0.75)
+  mtext(paste("Please enlarge this plot. Number of packages: ",length(all_vertices)), side=1, line=0, adj=1, cex=0.75)
 }
 
 #plotdstr(pkg = frst, recursive = T, includebasePkgs = F)
