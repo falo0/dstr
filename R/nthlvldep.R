@@ -4,19 +4,21 @@
 #' dependencies. It outputs the dependencies, dependencies of dependencies, ...
 #' of these first level dependencies. There are various options for the type of
 #' the output.
-#' @param githublink A link to a github repository of an R package
-#' @param pkg A list of packages from which we want to know the further
-#' dependencies. This list will be added to the first level dependencies
-#' of a given package on github it githublink is set
+#' @param githublink A link to a github repository of an R package.
+#' @param pkg Character input of a packagename you want to see the
+#' dependencies of. Multiple input packages can be given in vector format.
+#' This option is still valid in case of a of a given githublink.
+#' If neither a githublink nor a pkg parameter is passed, the function
+#' will use all via \code{library()} attached packages as input packages.
 #' @param outtype Possible output types:
 #' \itemize{
-#' \item edgelist: An edge list, e.g. to be used for network plots
+#' \item edgelist: An edge list, e.g. to be used for network plots.
 #' \item edgelistdetailed: An edge list, e.g. to be used for network plots, including
-#' information on the type of dependency
+#' information on the type of dependency.
 #' \item allpackages: An overview of all packages that are eventually loaded. No further
-#' structure visible
+#' structure visible.
 #' \item list: More detailed than allPKs, it's a list tha containns all packages per
-#' first level dependency
+#' first level dependency.
 #' \item uniquelist: like "list", just excluding all packages, that are eventually
 #' also loaded by another package in firstlvldep. This way you can see which
 #' dependencies will be removed completely if you remove a certain first level
@@ -26,19 +28,16 @@
 #' \item firstlvlpkgs: The vector of packages used as input. This is a combination
 #' when both the githublink and the pkg parameter are set.
 #' \item rootpackage: Whether to include the name of the package of the given
-#' github link. Returns "Root Package" when no github link was given
+#' github link. Returns "Root Package" when no github link was given.
 #' }
-#' @param includebasepkgs Whether to include base packages in the analysis or not
-#' @param recursive Whether you want to look deeper than the second level of dependencies,
-#' e.g. get all dependencies of dependencies of dependencies ...
-#' @param which What type of depencencies are regarded
+#' @param includebasepkgs Whether to include base packages in the analysis or not.
+#' @param recursive If TRUE dependencies of dependencies are considered.
 #' @export
 #' @importFrom utils available.packages installed.packages read.csv
 
 
 nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
-                      includebasepkgs = F, recursive = T,
-                      which = c("Imports", "Depends")){
+                      includebasepkgs = F, recursive = T){
 
 
   # ------- For testing only ---
@@ -46,16 +45,19 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   #pkg = NULL
   #recursive = T
   #includebasepkgs = F
-  #deplevels <- which ???
   # ----------------------------
   deplevels <- c("Imports","Depends")
 
-
-  bigmat <- available.packages()  #have to check if Git Hub repository
-
+  #if neither a pkg nor a githublink is passed, use activated packages
   if(is.null(pkg) & is.null(githublink)){
-    stop("You have to specify at least one of the two: pkg, githublink")
-  } else if (!is.null(githublink) & is.null(pkg)){
+    usedpkgs<-(.packages())
+    pkg <- usedpkgs[usedpkgs %in% base_pkgs == F]
+  }
+
+
+  bigmat <- available.packages()
+
+  if (!is.null(githublink) & is.null(pkg)){
     # only a github link and no vector of packages was given
     res <- firstlvldep(githublink, includeRootPkg = T)
     rootPkgName <- unname(res[[1]])
@@ -70,20 +72,14 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   }
 
   #read the list of base packages
-  base.pkgs <- rownames(installed.packages(priority="base"))
-
-  #if pkg not assigned use packages activated
-  if(is.null(pkg)){
-    used.pkgs<-(.packages())
-    pkg <- used.pkgs[used.pkgs %in% base.pkgs == F]
-  }
+  base_pkgs <- rownames(installed.packages(priority="base"))
 
 
   #create a vector of all needed packages (the vertices)
   frstlvllist <- tools::package_dependencies(pkg, recursive = recursive, which = deplevels, db=bigmat)
-  all.pkgs <- unique(unname(unlist(frstlvllist)))
+  allpkgs <- unique(unname(unlist(frstlvllist)))
 
-  all.pkgs <- c(pkg,all.pkgs)
+  allpkgs <- c(pkg,allpkgs)
 
 
   #create a function which takes a pkgname as input and returns a dataframe with the
@@ -108,24 +104,24 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   }
 
   # combine the small dataframes for each package to one edgelist
-  if(length(all.pkgs > 0)){
+  if(length(allpkgs > 0)){
     if (recursive == T){
-      result.df <-do.call(rbind,lapply(all.pkgs, level_pkg))
+      result_df <-do.call(rbind,lapply(allpkgs, level_pkg))
     } else {
 
-      result.df <-do.call(rbind,lapply(pkg, level_pkg))
+      result_df <-do.call(rbind,lapply(pkg, level_pkg))
     }
   } else {
     # There are no dependencies at all, return an empty data frame (and not NULL)
-    result.df <- data.frame("start" = character(),"end" = character(), "dependency" = character())
+    result_df <- data.frame("start" = character(),"end" = character(), "dependency" = character())
   }
-  row.names(result.df) <- NULL
+  row.names(result_df) <- NULL
 
   #if necessary delete all connections to base packages
   if ((includebasepkgs == F)) {
-    result.df <- subset(result.df, !(result.df[, 1] %in% base.pkgs))
-    result.df <- subset(result.df, !(result.df[, 2] %in% base.pkgs))
-    all.pkgs <- subset(all.pkgs, !(all.pkgs %in% base.pkgs))
+    result_df <- subset(result_df, !(result_df[, 1] %in% base_pkgs))
+    result_df <- subset(result_df, !(result_df[, 2] %in% base_pkgs))
+    allpkgs <- subset(allpkgs, !(allpkgs %in% base_pkgs))
   }
 
   create_unique_list <- function(frstlvllist){
@@ -144,17 +140,17 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
 
   if(length(outtype) == 1){
     if(outtype == "edgelist"){
-      return(result.df[,-3])
+      return(result_df[,-3])
     } else if (outtype == "edgelistdetailed"){
-      return(result.df)
+      return(result_df)
     } else if (outtype == "allpackages"){
-      return(all.pkgs)
+      return(allpkgs)
     } else if (outtype == "list"){
       return(frstlvllist)
     } else if (outtype == "uniquelist"){
       return(create_unique_list(frstlvllist))
     } else if (outtype == "tree"){
-      treeDF <- edges2tree(result.df[,-3], lvl1deps = pkg)
+      treeDF <- edges2tree(result_df[,-3], lvl1deps = pkg)
       # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
       treeDF[is.na(treeDF)] <- ""
       return(treeDF)
@@ -181,17 +177,17 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     outlist <- list()
     for (i in 1:length(outtype)){
       if(outtype[i] == "edgelist"){
-        outlist[[length(outlist)+1]] <- result.df[,-3]
+        outlist[[length(outlist)+1]] <- result_df[,-3]
       } else if (outtype[i] == "edgelistdetailed"){
-        outlist[[length(outlist)+1]] <- result.df
+        outlist[[length(outlist)+1]] <- result_df
       } else if (outtype[i] == "allpackages"){
-        outlist[[length(outlist)+1]] <- all.pkgs
+        outlist[[length(outlist)+1]] <- allpkgs
       } else if (outtype[i] == "list"){
         outlist[[length(outlist)+1]] <- frstlvllist
       } else if (outtype[i] == "uniquelist"){
         outlist[[length(outlist)+1]] <- create_unique_list(frstlvllist)
       } else if (outtype[i] == "tree"){
-        treeDF <- edges2tree(result.df[,-3], lvl1deps = pkg)
+        treeDF <- edges2tree(result_df[,-3], lvl1deps = pkg)
         # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
         treeDF[is.na(treeDF)] <- ""
         outlist[[length(outlist)+1]] <- treeDF
