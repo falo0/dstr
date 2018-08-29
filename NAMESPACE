@@ -3,7 +3,6 @@
 export(dstrsummary)
 export(edges2tree)
 export(firstlvldep)
-export(helper_pkgname_rawlink)
 export(nthlvldep)
 export(plotdstr)
 import(igraph)

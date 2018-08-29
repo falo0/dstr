@@ -3,11 +3,6 @@
 #' This function inputs various ways to link to a package or directly the description file on github
 #' It outputs the name of the package and a link to the raw DESCRIPTION file.
 #' @param githublink A link to the package repository or directly to the description file
-#' @export
-#' @examples
-#' helper_pkgname_rawlink("falo0/dstr")
-#' helper_pkgname_rawlink("https://github.com/falo0/dstr")
-#' helper_pkgname_rawlink("https://github.com/falo0/dstr/blob/master/DESCRIPTION")
 
 helper_pkgname_rawlink <- function(githublink){
 
