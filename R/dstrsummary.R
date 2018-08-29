@@ -24,32 +24,36 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
 
 
   if(is.null(githublink)){
-    print("DEPENDENCY ANALYSIS")
+    writeLines("--- DEPENDENCY ANALYSIS ---\n")
   } else if(is.null(pkg)){
-    print(paste0("'", data[[1]], "' DEPENDENCY ANALYSIS"))
+    writeLines(paste0("--- '", data[[1]], "' DEPENDENCY ANALYSIS ---\n"))
   } else {
-    print(paste0("'", data[[1]], " + pkg", "' DEPENDENCY ANALYSIS"))
+    writeLines(paste0("--- '", data[[1]], " + pkg", "' DEPENDENCY ANALYSIS ---\n"))
   }
 
-  print("###############")
+  #writeLines("###############")
 
-  print(paste0("First Level Packages (", length(data[[2]]),"):"))
+  writeLines(paste0("First Level Packages (", length(data[[2]]),")"))
+  writeLines("---------------------------------------------------------")
+  #writeLines(paste(names(data[[2]]), collapse = ", "))
   print(names(data[[2]]))
-  print("---------------------------------------------------------")
 
-  print(paste("All", length(data[[3]]), "Eventually Loaded Packages (dependencies of dependencies of...):"))
+  writeLines("\n")
+
+  writeLines(paste("All", length(data[[3]]), "Eventually Loaded Packages (Dependencies Of Dependencies Of...)"))
+  writeLines("---------------------------------------------------------")
   print(data[[3]])
-  print("---------------------------------------------------------")
 
+  writeLines("\n")
 
-  print("Opportunities To Reduce Dependencies:")
-
+  writeLines("Opportunities To Reduce Dependencies")
+  writeLines("---------------------------------------------------------")
   # Sort the list so that packages with most dependencies are first in list
   uniquelist <- uniquelist[names(sort(sapply(uniquelist, length),
                                       decreasing = T))]
 
   for (j in 1:length(uniquelist)){
-    print(paste0("If you remove '", names(uniquelist)[j],
+    writeLines(paste0("If you remove '", names(uniquelist)[j],
                  "' you will remove the following ", length(uniquelist[[j]]),
                                                            " packages completely:"))
 
@@ -60,7 +64,7 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
       soughtinlist <- sapply(dlist, function(x) sought %in% x)
       loaders <- names(soughtinlist)[soughtinlist]
 
-      print(paste0("Zero other packages and also not '", names(uniquelist)[j],
+      writeLines(paste0("Zero other packages and also not '", names(uniquelist)[j],
                    "' istelf because it is a deeper level depencendy from the
                    following first level dependencies:"))
       print(loaders)
@@ -68,11 +72,11 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
       #print(paste0("The following ", length(uniquelist[[j]]), " packages:"))
       print(uniquelist[[j]])
     }
+    writeLines("\n")
   }
 
-  print("---------------------------------------------------------")
-  print("Shared Dependencies / Hard To Remove:")
-
+  writeLines("Shared Dependencies / Hard To Remove")
+  writeLines("---------------------------------------------------------")
 
   shareddeps <- list()
   for(i in 1:length(allpkg)){
@@ -95,12 +99,18 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
                                function(y) names(shareddeps)[sapply(shareddeps,
                                                      function(x){all(x == y)})])
     for(i in 1:length(unique_loaders)){
-      print(paste0("The packages '", paste(collapsed_loaded[[i]], collapse = ", "),
-                   "' are loaded by your (",length(unique_loaders[[i]]) ,") first level packages '",
-                   paste(unique_loaders[[i]], collapse = ", ", "'")))
+      #writeLines(paste0("The packages '", paste(collapsed_loaded[[i]], collapse = ", "),
+      #             "' are loaded by your (",length(unique_loaders[[i]]) ,") first level packages '",
+      #             paste(unique_loaders[[i]], collapse = ", ", "'")))
+      writeLines(paste0(length(unique_loaders[[i]]),
+                        " first level packages ('",
+                        paste0(unique_loaders[[i]], collapse = ", ", "'"),
+                        ") depend on the following packages:"))
+      print(collapsed_loaded[[i]])
+      writeLines("\n")
     }
   } else {
-    print("You don't have shared dependencies, e.g. none of the ulimatively loaded packages is loaded because of two or more first level packages.")
+    writeLines("You don't have shared dependencies, e.g. none of the ulimatively loaded packages is loaded because of two or more first level packages.")
   }
 
   #writeLines(c("First Level Packages",
