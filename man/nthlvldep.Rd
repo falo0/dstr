@@ -5,25 +5,26 @@
 \title{Get All Deeper Level Dependencies}
 \usage{
 nthlvldep(githublink = NULL, pkg = NULL, outtype,
-  includebasepkgs = F, recursive = T, which = c("Imports",
-  "Depends"))
+  includebasepkgs = F, recursive = T)
 }
 \arguments{
-\item{githublink}{A link to a github repository of an R package}
+\item{githublink}{A link to a github repository of an R package.}
 
-\item{pkg}{A list of packages from which we want to know the further
-dependencies. This list will be added to the first level dependencies
-of a given package on github it githublink is set}
+\item{pkg}{Character input of a packagename you want to see the
+dependencies of. Multiple input packages can be given in vector format.
+This option is still valid in case of a of a given githublink.
+If neither a githublink nor a pkg parameter is passed, the function
+will use all via \code{library()} attached packages as input packages.}
 
 \item{outtype}{Possible output types:
 \itemize{
-\item edgelist: An edge list, e.g. to be used for network plots
+\item edgelist: An edge list, e.g. to be used for network plots.
 \item edgelistdetailed: An edge list, e.g. to be used for network plots, including
-information on the type of dependency
+information on the type of dependency.
 \item allpackages: An overview of all packages that are eventually loaded. No further
-structure visible
+structure visible.
 \item list: More detailed than allPKs, it's a list tha containns all packages per
-first level dependency
+first level dependency.
 \item uniquelist: like "list", just excluding all packages, that are eventually
 also loaded by another package in firstlvldep. This way you can see which
 dependencies will be removed completely if you remove a certain first level
@@ -33,15 +34,12 @@ in a data frame that is showing a tree structure.
 \item firstlvlpkgs: The vector of packages used as input. This is a combination
 when both the githublink and the pkg parameter are set.
 \item rootpackage: Whether to include the name of the package of the given
-github link. Returns "Root Package" when no github link was given
+github link. Returns "Root Package" when no github link was given.
 }}
 
-\item{includebasepkgs}{Whether to include base packages in the analysis or not}
+\item{includebasepkgs}{Whether to include base packages in the analysis or not.}
 
-\item{recursive}{Whether you want to look deeper than the second level of dependencies,
-e.g. get all dependencies of dependencies of dependencies ...}
-
-\item{which}{What type of depencencies are regarded}
+\item{recursive}{If TRUE dependencies of dependencies of ... are considered.}
 }
 \description{
 This function inputs a list of packages, regarded to as fist level

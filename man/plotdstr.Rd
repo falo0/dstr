@@ -5,7 +5,7 @@
 \title{Plot Dependencs Structure}
 \usage{
 plotdstr(githublink = NULL, pkg = NULL, includebasepkgs = F,
-  recursive = T, which = c("Imports", "Depends"))
+  recursive = T)
 }
 \arguments{
 \item{githublink}{A link to a github repository of an R package}
@@ -18,8 +18,6 @@ of a given package on github it githublink is set}
 
 \item{recursive}{Whether you want to look deeper than the second level of dependencies,
 e.g. get all dependencies of dependencies of dependencies ...}
-
-\item{which}{What type of depencencies are regarded}
 }
 \description{
 This function plots the dependency structur of a package
