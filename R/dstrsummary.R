@@ -9,72 +9,95 @@
 #' @export
 
 dstrsummary <- function(githublink = NULL, pkg = NULL){
+
+  #pkg <- "miniCRAN"
   #pkg <- NULL
   #githublink <- "tidyverse/ggplot2"
   #githublink <- "Stan125/GREA"
 
-  data <- nthlvldep(githublink, pkg, c("firstlvlpkgs", "allpackages", "uniquelist", "list", "rootpackage"))
+  data <- nthlvldep(githublink, pkg, c("rootpackage", "unique_list_inclusive", "allpackages", "list"))
+  uniquelist <- data[[2]]
+  allpkg <- data[[3]]
+  dlist <- data[[4]]
+
+
   if(is.null(githublink)){
     print("DEPENDENCY ANALYSIS")
   } else if(is.null(pkg)){
-    print(paste0("'", data[[5]], "' DEPENDENCY ANALYSIS"))
+    print(paste0("'", data[[1]], "' DEPENDENCY ANALYSIS"))
   } else {
-    print(paste0("'", data[[5]], " + pkg", "' DEPENDENCY ANALYSIS"))
+    print(paste0("'", data[[1]], " + pkg", "' DEPENDENCY ANALYSIS"))
   }
 
   print("###############")
 
-  print("First Level Packages:")
-  print(data[[1]])
+  print(paste0("First Level Packages (", length(data[[2]]),"):"))
+  print(names(data[[2]]))
   print("--------------------")
 
-  print("All Eventually Loaded Packages (dependencies of dependencies of...):")
-  print(data[[2]])
+  print(paste("All", length(data[[3]]), "Eventually Loaded Packages (dependencies of dependencies of...):"))
+  print(data[[3]])
   print("--------------------")
 
 
   print("Opportunities To Reduce Dependencies:")
-  uniquelist <- data[[3]]
-  dlist <- data[[4]]
+
+  # Sort the list so that packages with most dependencies are first in list
+  uniquelist <- uniquelist[names(sort(sapply(uniquelist, length),
+                                      decreasing = T))]
 
   for (j in 1:length(uniquelist)){
-    print(paste0("If you remove '", names(uniquelist)[j], "' you will remove completely:"))
+    print(paste0("If you remove '", names(uniquelist)[j],
+                 "' you will remove the following ", length(uniquelist[[j]]),
+                                                           " packages completely:"))
 
     if(length(uniquelist[[j]]) == 0){
+      #sought <- "shiny"
+      sought <- names(uniquelist)[j]
 
-      firstlvlpkgname <- names(dlist)[j]
-      loaderlist <- list()
-      for (i in 1:length(dlist)){
-        allother <- dlist[-i]
-        loader <- character()
-        for(i in 1:length(allother)){
-          if(firstlvlpkgname %in% allother[[i]]){
-            loader[length(loader)+1] <- names(allother)[i]
-          }
-        }
-        loaderlist <- loader
-      }
+      soughtinlist <- sapply(dlist, function(x) sought %in% x)
+      loaders <- names(soughtinlist)[soughtinlist]
 
-      if(length(loaderlist) > 0){
-        print(paste0("Zero other packages and also not '", names(uniquelist)[j],
-                     "' istelf because it is a deeper level depencendy from the
-                     following first level dependencies: ", loaderlist))
-      } else {
-        print(paste0("Zero other packages, but you will remove '",
-                     names(uniquelist)[j], "' itself"))
-      }
-
-
+      print(paste0("Zero other packages and also not '", names(uniquelist)[j],
+                   "' istelf because it is a deeper level depencendy from the
+                   following first level dependencies:"))
+      print(loaders)
     } else {
-      print(c(names(uniquelist)[j], uniquelist[[j]]))
+      #print(paste0("The following ", length(uniquelist[[j]]), " packages:"))
+      print(uniquelist[[j]])
     }
   }
 
   print("--------------")
-  print("Shared Dependencies / Hard to remove (optional?)")
-  print("The packages x, y, z are loaded by your first lvl packages a, b, c")
-  print("The packages g, h, i are loaded by your first lvl packages a, c")
-  print("The package f is loaded by your first lvl packages a, b")
+  print("Shared Dependencies / Hard To Remove:")
+
+
+  shareddeps <- list()
+  for(i in 1:length(allpkg)){
+
+    soughtinlist <- sapply(dlist, function(y) allpkg[i] %in% y)
+    loaders <- names(soughtinlist)[soughtinlist]
+    if(length(loaders) > 1){
+      shareddeps[[length(shareddeps)+1]] <- loaders
+      names(shareddeps)[length(shareddeps)] <- allpkg[i]
+    }
+
+  }
+
+  # Sort the list so that packages with most dependencies are first in list
+  shareddeps <- shareddeps[names(sort(sapply(shareddeps, length),
+                                      decreasing = T))]
+
+  unique_loaders <- unique(shareddeps)
+  collapsed_loaded <- lapply(unique_loaders,
+                             function(y) names(shareddeps)[sapply(shareddeps,
+                                                   function(x){all(x == y)})])
+  for(i in 1:length(unique_loaders)){
+    print(paste0("The packages '", paste(collapsed_loaded[[i]], collapse = ", "),
+                 "' are loaded by your (",length(unique_loaders[[i]]) ,") first level packages '",
+                 paste(unique_loaders[[i]], collapse = ", ", "'")))
+  }
+
 
   #writeLines(c("First Level Packages",
   #             data[[1]],

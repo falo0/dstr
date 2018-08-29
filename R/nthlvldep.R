@@ -42,7 +42,10 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
 
   # ------- For testing only ---
   #githublink = "Stan125/GREA"
+  #githublink = "falo0/dstr"
+  #githublink = NULL
   #pkg = NULL
+  #pkg = c("miniCRAN", "ggplot2")
   #recursive = T
   #includebasepkgs = F
   # ----------------------------
@@ -73,6 +76,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     rootPkgName <- unname(res[[1]])
     pkg <- unique(c(res[[2]], pkg))
   }
+
 
   #create a vector of all needed packages (the vertices)
   frstlvllist <- tools::package_dependencies(pkg, recursive = recursive, which = deplevels, db=bigmat)
@@ -112,7 +116,8 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     }
   } else {
     # There are no dependencies at all, return an empty data frame (and not NULL)
-    result_df <- data.frame("start" = character(),"end" = character(), "dependency" = character())
+    result_df <- data.frame("start" = character(),"end" = character(),
+                            "dependency" = character())
   }
   row.names(result_df) <- NULL
 
@@ -121,6 +126,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     result_df <- subset(result_df, !(result_df[, 1] %in% base_pkgs))
     result_df <- subset(result_df, !(result_df[, 2] %in% base_pkgs))
     allpkgs <- subset(allpkgs, !(allpkgs %in% base_pkgs))
+
+    frstlvllist <- lapply(frstlvllist,
+                          function(x){subset(x, !(x %in% base_pkgs))})
   }
 
   create_unique_list <- function(frstlvllist){
@@ -146,8 +154,20 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
       return(allpkgs)
     } else if (outtype == "list"){
       return(frstlvllist)
+    } else if (outtype == "list_inclusive"){
+      frstlvllistinclusive <- lapply(seq_along(frstlvllist),
+                                     function(i) c(names(frstlvllist)[[i]],
+                                                   frstlvllist[[i]]))
+      names(frstlvllistinclusive) <- names(frstlvllist)
+      return(frstlvllistinclusive)
     } else if (outtype == "uniquelist"){
       return(create_unique_list(frstlvllist))
+    } else if (outtype == "unique_list_inclusive"){
+      frstlvllistinclusive <- lapply(seq_along(frstlvllist),
+                                     function(i) c(names(frstlvllist)[[i]],
+                                                   frstlvllist[[i]]))
+      names(frstlvllistinclusive) <- names(frstlvllist)
+      return(create_unique_list(frstlvllistinclusive))
     } else if (outtype == "tree"){
       treeDF <- edges2tree(result_df[,-3], lvl1deps = pkg)
       # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
@@ -183,8 +203,20 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
         outlist[[length(outlist)+1]] <- allpkgs
       } else if (outtype[i] == "list"){
         outlist[[length(outlist)+1]] <- frstlvllist
+      }  else if (outtype[i] == "list_inclusive"){
+        frstlvllistinclusive <- lapply(seq_along(frstlvllist),
+                                       function(i) c(names(frstlvllist)[[i]],
+                                                     frstlvllist[[i]]))
+        names(frstlvllistinclusive) <- names(frstlvllist)
+        outlist[[length(outlist)+1]] <- frstlvllistinclusive
       } else if (outtype[i] == "uniquelist"){
         outlist[[length(outlist)+1]] <- create_unique_list(frstlvllist)
+      }  else if (outtype[i] == "unique_list_inclusive"){
+        frstlvllistinclusive <- lapply(seq_along(frstlvllist),
+                                       function(i) c(names(frstlvllist)[[i]],
+                                                     frstlvllist[[i]]))
+        names(frstlvllistinclusive) <- names(frstlvllist)
+        outlist[[length(outlist)+1]] <- create_unique_list(frstlvllistinclusive)
       } else if (outtype[i] == "tree"){
         treeDF <- edges2tree(result_df[,-3], lvl1deps = pkg)
         # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this

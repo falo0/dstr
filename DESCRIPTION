@@ -1,5 +1,5 @@
 Package: dstr
-Title: Effectively reducing package dependencies in own r projects
+Title: Effectively reducing package dependencies in own R projects
 Version: 0.1.0
 Authors@R: c(
 	person("Olaf", "Menssen", email = "o.menssen@me.com", role = c("aut", "cre")),
