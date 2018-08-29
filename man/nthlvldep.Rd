@@ -19,25 +19,25 @@ will use all via \code{library()} attached packages as input packages.}
 \item{outtype}{Possible output types:
 \itemize{
 \item edgelist: An edge list, e.g. to be used for network plots.
-\item edgelistdetailed: An edge list, e.g. to be used for network plots, including
+\item edgelist_detailed: An edge list, e.g. to be used for network plots, including
 information on the type of dependency.
-\item allpackages: An overview of all packages that are eventually loaded. No further
+\item all_packages: An overview of all packages that are eventually loaded. No further
 structure visible.
 \item list: More detailed than allPKs, it's a list tha containns all packages per
 first level dependency.
 \item list_inclusive: like list but the first level dependencies are not only
 used for the names of the list elements but also included in the list elements
-\item uniquelist: like "list", just excluding all packages, that are eventually
+\item unique_list: like "list", just excluding all packages, that are eventually
 also loaded by another package in firstlvldep. This way you can see which
 dependencies will be removed completely if you remove a certain first level
 dependency (a package that you import).
-\item unique_list_inclusive: like uniquelist, but each first level dependency
+\item unique_list_inclusive: like unique_list, but each first level dependency
 is included in the corresponding list element IF it is a unique dependency.
 \item tree: Detailed information about which package depends on which, represented
 in a data frame that is showing a tree structure.
-\item firstlvlpkgs: The vector of packages used as input. This is a combination
+\item first_level_packages: The vector of packages used as input. This is a combination
 when both the githublink and the pkg parameter are set.
-\item rootpackage: Whether to include the name of the package of the given
+\item root_package: Whether to include the name of the package of the given
 github link. Returns "Root Package" when no github link was given.
 }}
 

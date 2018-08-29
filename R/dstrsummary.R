@@ -17,18 +17,18 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
   #githublink <- "tidyverse/ggplot2"
   #githublink <- "Stan125/GREA"
 
-  data <- nthlvldep(githublink, pkg, c("rootpackage", "unique_list_inclusive", "allpackages", "list"))
+  data <- nthlvldep(githublink, pkg, c("root_package", "unique_list_inclusive", "all_packages", "list"))
   uniquelist <- data[[2]]
   allpkg <- data[[3]]
   dlist <- data[[4]]
 
 
   if(is.null(githublink)){
-    writeLines("--- DEPENDENCY ANALYSIS ---\n")
+    writeLines("--- DEPENDENCY STRUCTURE ANALYSIS ---\n")
   } else if(is.null(pkg)){
-    writeLines(paste0("--- '", data[[1]], "' DEPENDENCY ANALYSIS ---\n"))
+    writeLines(paste0("--- '", data[[1]], "' DEPENDENCY STRUCTURE ANALYSIS ---\n"))
   } else {
-    writeLines(paste0("--- '", data[[1]], " + pkg", "' DEPENDENCY ANALYSIS ---\n"))
+    writeLines(paste0("--- '", data[[1]], " + pkg", "' DEPENDENCY STRUCTURE ANALYSIS ---\n"))
   }
 
   #writeLines("###############")

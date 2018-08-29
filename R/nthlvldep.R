@@ -13,25 +13,25 @@
 #' @param outtype Possible output types:
 #' \itemize{
 #' \item edgelist: An edge list, e.g. to be used for network plots.
-#' \item edgelistdetailed: An edge list, e.g. to be used for network plots, including
+#' \item edgelist_detailed: An edge list, e.g. to be used for network plots, including
 #' information on the type of dependency.
-#' \item allpackages: An overview of all packages that are eventually loaded. No further
+#' \item all_packages: An overview of all packages that are eventually loaded. No further
 #' structure visible.
 #' \item list: More detailed than allPKs, it's a list tha containns all packages per
 #' first level dependency.
 #' \item list_inclusive: like list but the first level dependencies are not only
 #' used for the names of the list elements but also included in the list elements
-#' \item uniquelist: like "list", just excluding all packages, that are eventually
+#' \item unique_list: like "list", just excluding all packages, that are eventually
 #' also loaded by another package in firstlvldep. This way you can see which
 #' dependencies will be removed completely if you remove a certain first level
 #' dependency (a package that you import).
-#' \item unique_list_inclusive: like uniquelist, but each first level dependency
+#' \item unique_list_inclusive: like unique_list, but each first level dependency
 #' is included in the corresponding list element IF it is a unique dependency.
 #' \item tree: Detailed information about which package depends on which, represented
 #' in a data frame that is showing a tree structure.
-#' \item firstlvlpkgs: The vector of packages used as input. This is a combination
+#' \item first_level_packages: The vector of packages used as input. This is a combination
 #' when both the githublink and the pkg parameter are set.
-#' \item rootpackage: Whether to include the name of the package of the given
+#' \item root_package: Whether to include the name of the package of the given
 #' github link. Returns "Root Package" when no github link was given.
 #' }
 #' @param includebasepkgs Whether to include base packages in the analysis or not.
@@ -137,13 +137,13 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
 
   create_unique_list <- function(frstlvllist){
     if(length(frstlvllist) >= 1){
-      uniquelist <- list()
+      unique_list <- list()
       for(i in 1:length(frstlvllist)){
         everythingelse <- unname(unlist(frstlvllist[-i]))
-        uniquelist[[i]] <- setdiff(frstlvllist[[i]], everythingelse)
+        unique_list[[i]] <- setdiff(frstlvllist[[i]], everythingelse)
       }
-      names(uniquelist) <- pkg
-      return(uniquelist)
+      names(unique_list) <- pkg
+      return(unique_list)
     } else {
       return(frstlvllist)
     }
@@ -152,9 +152,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   if(length(outtype) == 1){
     if(outtype == "edgelist"){
       return(result_df[,-3])
-    } else if (outtype == "edgelistdetailed"){
+    } else if (outtype == "edgelist_detailed"){
       return(result_df)
-    } else if (outtype == "allpackages"){
+    } else if (outtype == "all_packages"){
       return(allpkgs)
     } else if (outtype == "list"){
       return(frstlvllist)
@@ -164,7 +164,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
                                                    frstlvllist[[i]]))
       names(frstlvllistinclusive) <- names(frstlvllist)
       return(frstlvllistinclusive)
-    } else if (outtype == "uniquelist"){
+    } else if (outtype == "unique_list"){
       return(create_unique_list(frstlvllist))
     } else if (outtype == "unique_list_inclusive"){
       frstlvllistinclusive <- lapply(seq_along(frstlvllist),
@@ -177,18 +177,18 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
       # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
       treeDF[is.na(treeDF)] <- ""
       return(treeDF)
-    } else if (outtype == "firstlvlpkgs"){
+    } else if (outtype == "first_level_packages"){
       return(pkg)
-    } else if (outtype == "rootpackage"){
+    } else if (outtype == "root_package"){
       if(exists("rootPkgName")){
         return(rootPkgName)
       } else {
         return("Root Package")
       }
     } else {
-      stop("outtype has to be at least on of the following (possibly a vector of
-           several): edgelist, edgelistdetailed, allpackages, list,
-           uniquelist, tree, firstlvlpkgs, rootpackage")
+      stop("outtype has to be at least one of the following (possibly a vector of
+           several): edgelist, edgelist_detailed, all_packages, list, list_inclusive,
+           unique_list, unique_list_inclusive, tree, first_level_packages, root_package")
     }
 
 
@@ -201,9 +201,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     for (i in 1:length(outtype)){
       if(outtype[i] == "edgelist"){
         outlist[[length(outlist)+1]] <- result_df[,-3]
-      } else if (outtype[i] == "edgelistdetailed"){
+      } else if (outtype[i] == "edgelist_detailed"){
         outlist[[length(outlist)+1]] <- result_df
-      } else if (outtype[i] == "allpackages"){
+      } else if (outtype[i] == "all_packages"){
         outlist[[length(outlist)+1]] <- allpkgs
       } else if (outtype[i] == "list"){
         outlist[[length(outlist)+1]] <- frstlvllist
@@ -213,7 +213,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
                                                      frstlvllist[[i]]))
         names(frstlvllistinclusive) <- names(frstlvllist)
         outlist[[length(outlist)+1]] <- frstlvllistinclusive
-      } else if (outtype[i] == "uniquelist"){
+      } else if (outtype[i] == "unique_list"){
         outlist[[length(outlist)+1]] <- create_unique_list(frstlvllist)
       }  else if (outtype[i] == "unique_list_inclusive"){
         frstlvllistinclusive <- lapply(seq_along(frstlvllist),
@@ -226,9 +226,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
         # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
         treeDF[is.na(treeDF)] <- ""
         outlist[[length(outlist)+1]] <- treeDF
-      } else if (outtype[i] == "firstlvlpkgs"){
+      } else if (outtype[i] == "first_level_packages"){
         outlist[[length(outlist)+1]] <- pkg
-      } else if (outtype[i] == "rootpackage"){
+      } else if (outtype[i] == "root_package"){
         if(exists("rootPkgName")){
           outlist[[length(outlist)+1]] <-rootPkgName
         } else {
@@ -236,8 +236,8 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
         }
       } else {
         stop("outtype has to be at least one of the following (possibly a vector of
-             several): edgelist, edgelistdetailed, allpackages, list,
-             uniquelist, tree, firstlvlpkgs, rootpackage")
+           several): edgelist, edgelist_detailed, all_packages, list, list_inclusive,
+             unique_list, unique_list_inclusive, tree, first_level_packages, root_package")
       }
     }
 

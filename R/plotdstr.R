@@ -24,8 +24,8 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   #Create the edgelists
   data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
                      includebasepkgs = includebasepkgs,
-                     outtype = c("edgelistdetailed","allpackages",
-                                 "firstlvlpkgs", "rootpackage"))
+                     outtype = c("edgelist_detailed","all_packages",
+                                 "first_level_packages", "root_package"))
 
   all_edges <- data[[1]]
   names(all_edges) <- c("start.vertex", "end.vertex", "dependencies")
