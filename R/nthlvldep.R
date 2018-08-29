@@ -31,7 +31,7 @@
 #' github link. Returns "Root Package" when no github link was given.
 #' }
 #' @param includebasepkgs Whether to include base packages in the analysis or not.
-#' @param recursive If TRUE dependencies of dependencies are considered.
+#' @param recursive If TRUE dependencies of dependencies of ... are considered.
 #' @export
 #' @importFrom utils available.packages installed.packages read.csv
 
@@ -47,6 +47,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   #includebasepkgs = F
   # ----------------------------
   deplevels <- c("Imports","Depends")
+
+  #read the list of base packages
+  base_pkgs <- rownames(installed.packages(priority="base"))
 
   #if neither a pkg nor a githublink is passed, use activated packages
   if(is.null(pkg) & is.null(githublink)){
@@ -70,10 +73,6 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     rootPkgName <- unname(res[[1]])
     pkg <- unique(c(res[[2]], pkg))
   }
-
-  #read the list of base packages
-  base_pkgs <- rownames(installed.packages(priority="base"))
-
 
   #create a vector of all needed packages (the vertices)
   frstlvllist <- tools::package_dependencies(pkg, recursive = recursive, which = deplevels, db=bigmat)
