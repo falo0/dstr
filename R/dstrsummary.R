@@ -11,7 +11,9 @@
 dstrsummary <- function(githublink = NULL, pkg = NULL){
 
   #pkg <- "miniCRAN"
+  #pkg <- c("ggplot2", "data.table")
   #pkg <- NULL
+  #githublink <- NULL
   #githublink <- "tidyverse/ggplot2"
   #githublink <- "Stan125/GREA"
 
@@ -33,11 +35,11 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
 
   print(paste0("First Level Packages (", length(data[[2]]),"):"))
   print(names(data[[2]]))
-  print("--------------------")
+  print("---------------------------------------------------------")
 
   print(paste("All", length(data[[3]]), "Eventually Loaded Packages (dependencies of dependencies of...):"))
   print(data[[3]])
-  print("--------------------")
+  print("---------------------------------------------------------")
 
 
   print("Opportunities To Reduce Dependencies:")
@@ -68,7 +70,7 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
     }
   }
 
-  print("--------------")
+  print("---------------------------------------------------------")
   print("Shared Dependencies / Hard To Remove:")
 
 
@@ -83,21 +85,23 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
     }
 
   }
+  if(length(shareddeps) > 0){
+    # Sort the list so that packages with most dependencies are first in list
+    shareddeps <- shareddeps[names(sort(sapply(shareddeps, length),
+                                        decreasing = T))]
 
-  # Sort the list so that packages with most dependencies are first in list
-  shareddeps <- shareddeps[names(sort(sapply(shareddeps, length),
-                                      decreasing = T))]
-
-  unique_loaders <- unique(shareddeps)
-  collapsed_loaded <- lapply(unique_loaders,
-                             function(y) names(shareddeps)[sapply(shareddeps,
-                                                   function(x){all(x == y)})])
-  for(i in 1:length(unique_loaders)){
-    print(paste0("The packages '", paste(collapsed_loaded[[i]], collapse = ", "),
-                 "' are loaded by your (",length(unique_loaders[[i]]) ,") first level packages '",
-                 paste(unique_loaders[[i]], collapse = ", ", "'")))
+    unique_loaders <- unique(shareddeps)
+    collapsed_loaded <- lapply(unique_loaders,
+                               function(y) names(shareddeps)[sapply(shareddeps,
+                                                     function(x){all(x == y)})])
+    for(i in 1:length(unique_loaders)){
+      print(paste0("The packages '", paste(collapsed_loaded[[i]], collapse = ", "),
+                   "' are loaded by your (",length(unique_loaders[[i]]) ,") first level packages '",
+                   paste(unique_loaders[[i]], collapse = ", ", "'")))
+    }
+  } else {
+    print("You don't have shared dependencies, e.g. none of the ulimatively loaded packages is loaded because of two or more first level packages.")
   }
-
 
   #writeLines(c("First Level Packages",
   #             data[[1]],

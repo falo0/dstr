@@ -25,10 +25,14 @@ information on the type of dependency.
 structure visible.
 \item list: More detailed than allPKs, it's a list tha containns all packages per
 first level dependency.
+\item list_inclusive: like list but the first level dependencies are not only
+used for the names of the list elements but also included in the list elements
 \item uniquelist: like "list", just excluding all packages, that are eventually
 also loaded by another package in firstlvldep. This way you can see which
 dependencies will be removed completely if you remove a certain first level
 dependency (a package that you import).
+\item unique_list_inclusive: like uniquelist, but each first level dependency
+is included in the corresponding list element IF it is a unique dependency.
 \item tree: Detailed information about which package depends on which, represented
 in a data frame that is showing a tree structure.
 \item firstlvlpkgs: The vector of packages used as input. This is a combination
