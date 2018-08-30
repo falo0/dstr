@@ -1,15 +1,13 @@
 #' Get All Deeper Level Dependencies
 #'
-#' This function inputs a list of packages, regarded to as fist level
-#' dependencies. It outputs the dependencies, dependencies of dependencies, ...
-#' of these first level dependencies. There are various options for the type of
-#' the output.
+#' Function takes package names as input and searches for their package
+#' dependencies. It returns the dependencies and dependencies of further
+#' dependencies. There are various options for the type of the output.
+#'
 #' @param githublink A link to a github repository of an R package.
 #' @param pkg Character input of a packagename you want to see the
 #' dependencies of. Multiple input packages can be given in vector format.
 #' This option is still valid in case of a of a given githublink.
-#' If neither a githublink nor a pkg parameter is passed, the function
-#' will use all via \code{library()} attached packages as input packages.
 #' @param outtype Possible output types:
 #' \itemize{
 #' \item edgelist: An edge list, e.g. to be used for network plots.
@@ -61,10 +59,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   base_pkgs <- rownames(installed.packages(priority="base"))
   rootPkgName <- NULL
 
-  #if neither a pkg nor a githublink is passed, use activated packages
-  if(is.null(pkg) & is.null(githublink)){
-    usedpkgs<-(.packages())
-    pkg <- usedpkgs[usedpkgs %in% base_pkgs == F]
+  if (is.null(githublink) & is.null(pkg)){
+    stop("No input package defined. Please define at least one package in 'pkg'
+         or a github repository of a R package.")
   }
 
 
