@@ -8,7 +8,7 @@
 #' of a given package on github it githublink is set.
 #' @export
 
-dstrsummary <- function(githublink = NULL, pkg = NULL){
+dstr <- function(githublink = NULL, pkg = NULL){
 
   #pkg <- "miniCRAN"
   #pkg <- c("ggplot2", "data.table")
@@ -65,8 +65,7 @@ dstrsummary <- function(githublink = NULL, pkg = NULL){
       loaders <- names(soughtinlist)[soughtinlist]
 
       writeLines(paste0("Zero other packages and also not '", names(uniquelist)[j],
-                   "' istelf because it is a deeper level depencendy from the
-                   following first level dependencies:"))
+                   "' istelf because it is a deeper level depencendy from the following first level dependencies:"))
       print(loaders)
     } else {
       #print(paste0("The following ", length(uniquelist[[j]]), " packages:"))
