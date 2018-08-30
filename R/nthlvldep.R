@@ -130,11 +130,11 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   remove_base_pkgs <- function(){
   #if necessary delete all connections to base packages
     if ((includebasepkgs == F)) {
-      result_df <- subset(result_df, !(result_df[, 1] %in% base_pkgs))
-      result_df <- subset(result_df, !(result_df[, 2] %in% base_pkgs))
-      allpkgs <- subset(allpkgs, !(allpkgs %in% base_pkgs))
+      result_df <<- subset(result_df, !(result_df[, 1] %in% base_pkgs))
+      result_df <<- subset(result_df, !(result_df[, 2] %in% base_pkgs))
+      allpkgs <<- subset(allpkgs, !(allpkgs %in% base_pkgs))
 
-      frstlvllist <- lapply(frstlvllist,
+      frstlvllist <<- lapply(frstlvllist,
                             function(x){subset(x, !(x %in% base_pkgs))})
     }
   }
@@ -278,6 +278,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   }
 
 }
+
 
 
 
