@@ -28,7 +28,7 @@ creating individual dependency graphs.
 }
 \examples{
 
-network_object <- dstr_network(githublink = "falo0/dstr", pkg = "ggplot2")
+#network_object <- dstr_network(githublink = "falo0/dstr", pkg = "ggplot2")
 #plot.igraph(network_object, edge.arrow.size = .1, edge.color="darkgrey",vertex.size = 10,
 #           vertex.shape = "circle",vertex.frame.color = "white", vertex.label.font= 1,
 #            vertex.label.color = "black", vertex.color = "white",edge.width = 1.5,
