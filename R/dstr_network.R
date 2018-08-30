@@ -32,7 +32,7 @@
 dstr_network <- function(githublink = NULL, pkg = NULL,includebasepkgs = F, recursive = T) {
 
   #create edgelist
-  edgelist <- nthlvldep(githublink = githublink, pkg = pkg, outtype="edgelistdetailed", includebasepkgs = includebasepkgs, recursive = recursive)
+  edgelist <- nthlvldep(githublink = githublink, pkg = pkg, outtype="edgelist_inclusive", includebasepkgs = includebasepkgs, recursive = recursive)
 
 
 
