@@ -13,8 +13,8 @@
 #' @param outtype Possible output types:
 #' \itemize{
 #' \item edgelist: An edge list, e.g. to be used for network plots.
-#' \item edgelist_detailed: An edge list, e.g. to be used for network plots, including
-#' information on the type of dependency.
+#' \item edgelist_inclusive: An edge list, e.g. to be used for network plots, including
+#' the root package itself when using a githublink.
 #' \item all_packages: An overview of all packages that are eventually loaded. No further
 #' structure visible.
 #' \item list: More detailed than allPKs, it's a list tha containns all packages per
@@ -48,6 +48,8 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   #githublink = "Stan125/GREA"
   #githublink = "falo0/dstr"
   #githublink = NULL
+  #githublink = "tidyverse/ggplot2"
+  #pkg = "NightDay"
   #pkg = NULL
   #pkg = c("miniCRAN", "ggplot2")
   #recursive = T
@@ -57,6 +59,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
 
   #read the list of base packages
   base_pkgs <- rownames(installed.packages(priority="base"))
+  rootPkgName <- NULL
 
   #if neither a pkg nor a githublink is passed, use activated packages
   if(is.null(pkg) & is.null(githublink)){
@@ -71,6 +74,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     # only a github link and no vector of packages was given
     res <- firstlvldep(githublink, includeRootPkg = T)
     rootPkgName <- unname(res[[1]])
+    github_firstlvl <- res[[2]]
     pkg <- res[[2]]
   } else if (!is.null(githublink) & !is.null(pkg)){
     # both a githublink and a vector of packges where given, e.g. to test
@@ -78,6 +82,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     # of packages
     res <- firstlvldep(githublink, includeRootPkg = T)
     rootPkgName <- unname(res[[1]])
+    github_firstlvl <- res[[2]]
     pkg <- unique(c(res[[2]], pkg))
   }
 
@@ -125,15 +130,18 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   }
   row.names(result_df) <- NULL
 
+  remove_base_pkgs <- function(){
   #if necessary delete all connections to base packages
-  if ((includebasepkgs == F)) {
-    result_df <- subset(result_df, !(result_df[, 1] %in% base_pkgs))
-    result_df <- subset(result_df, !(result_df[, 2] %in% base_pkgs))
-    allpkgs <- subset(allpkgs, !(allpkgs %in% base_pkgs))
+    if ((includebasepkgs == F)) {
+      result_df <- subset(result_df, !(result_df[, 1] %in% base_pkgs))
+      result_df <- subset(result_df, !(result_df[, 2] %in% base_pkgs))
+      allpkgs <- subset(allpkgs, !(allpkgs %in% base_pkgs))
 
-    frstlvllist <- lapply(frstlvllist,
-                          function(x){subset(x, !(x %in% base_pkgs))})
+      frstlvllist <- lapply(frstlvllist,
+                            function(x){subset(x, !(x %in% base_pkgs))})
+    }
   }
+  remove_base_pkgs()
 
   create_unique_list <- function(frstlvllist){
     if(length(frstlvllist) >= 1){
@@ -149,10 +157,29 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     }
   }
 
+  include_root_in_edgelist <- function(edgelist){
+    if(is.null(rootPkgName)){
+      return(edgelist)
+    } else {
+      if (recursive == T){
+        firstlevel_frame <- data.frame("start" = rep(rootPkgName,
+                        length(github_firstlvl)), "end" = github_firstlvl)
+
+        result_df <- rbind(firstlevel_frame, edgelist)
+      } else {
+        result_df <- data.frame("start" = rep(rootPkgName, length(github_firstlvl)),
+                                "end" = github_firstlvl)
+      }
+      return(result_df)
+    }
+  }
+
   if(length(outtype) == 1){
     if(outtype == "edgelist"){
       return(result_df[,-3])
-    } else if (outtype == "edgelist_detailed"){
+    } else if (outtype == "edgelist_inclusive"){
+      result_df <- include_root_in_edgelist(result_df[,-3])
+      remove_base_pkgs()
       return(result_df)
     } else if (outtype == "all_packages"){
       return(allpkgs)
@@ -180,14 +207,14 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     } else if (outtype == "first_level_packages"){
       return(pkg)
     } else if (outtype == "root_package"){
-      if(exists("rootPkgName")){
+      if(!is.null(rootPkgName)){
         return(rootPkgName)
       } else {
         return("Root Package")
       }
     } else {
       stop("outtype has to be at least one of the following (possibly a vector of
-           several): edgelist, edgelist_detailed, all_packages, list, list_inclusive,
+           several): edgelist, edgelist_inclusive, all_packages, list, list_inclusive,
            unique_list, unique_list_inclusive, tree, first_level_packages, root_package")
     }
 
@@ -201,7 +228,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     for (i in 1:length(outtype)){
       if(outtype[i] == "edgelist"){
         outlist[[length(outlist)+1]] <- result_df[,-3]
-      } else if (outtype[i] == "edgelist_detailed"){
+      } else if (outtype[i] == "edgelist_inclusive"){
+        result_df <- include_root_in_edgelist(result_df[,-3])
+        remove_base_pkgs()
         outlist[[length(outlist)+1]] <- result_df
       } else if (outtype[i] == "all_packages"){
         outlist[[length(outlist)+1]] <- allpkgs
@@ -229,17 +258,19 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
       } else if (outtype[i] == "first_level_packages"){
         outlist[[length(outlist)+1]] <- pkg
       } else if (outtype[i] == "root_package"){
-        if(exists("rootPkgName")){
+        if(!is.null(rootPkgName)){
           outlist[[length(outlist)+1]] <-rootPkgName
         } else {
           outlist[[length(outlist)+1]] <-"Root Package"
         }
       } else {
         stop("outtype has to be at least one of the following (possibly a vector of
-           several): edgelist, edgelist_detailed, all_packages, list, list_inclusive,
+           several): edgelist, edgelist_inclusive, all_packages, list, list_inclusive,
              unique_list, unique_list_inclusive, tree, first_level_packages, root_package")
       }
     }
+    #print(outtype)
+    #print(outlist)
 
     names(outlist) <- outtype
     return(outlist)

@@ -4,34 +4,52 @@
 #' @param githublink A link to a github repository of an R package
 #' @param pkg A list of packages from which we want to know the further
 #' dependencies. This list will be added to the first level dependencies
-#' of a given package on github it githublink is set
-#' @param includebasepkgs Whether to include base packages in the analysis or not
+#' of a given package on github it githublink is set.
+#' @param includebasepkgs Whether to include base packages in the analysis.
+#' @param includerootpkg Whether to include the root package in the plot.
 #' @param recursive Whether you want to look deeper than the second level of dependencies,
 #' e.g. get all dependencies of dependencies of dependencies ...
 #' @import igraph
 #' @export
 #' @importFrom graphics mtext plot
 
-plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive = T){
+plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive = T,
+                     includerootpkg = T){
   #pkg <- frst
+  #pkg <- c("NightDay", "data.table", "gtable")
   #recursive <- T
-  #includebasePkgs <- F
-  deplevels <- c("Imports", "Depends")
+  #includebasepkgs <- F
   #githublink <- "tidyverse/ggplot2"
   #githublink <- NULL
+
   bigmat <- available.packages()
+  deplevels <- c("Imports", "Depends")
 
   #Create the edgelists
-  data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
-                     includebasepkgs = includebasepkgs,
-                     outtype = c("edgelist_detailed","all_packages",
-                                 "first_level_packages", "root_package"))
+  if(includerootpkg & !is.null(githublink)){
+    data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
+                       includebasepkgs = includebasepkgs,
+                       outtype = c("edgelist_inclusive","all_packages",
+                                   "first_level_packages", "root_package"))
+  } else {
+    data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
+                      includebasepkgs = includebasepkgs,
+                      outtype = c("edgelist","all_packages",
+                                  "first_level_packages", "root_package"))
+  }
 
   all_edges <- data[[1]]
-  names(all_edges) <- c("start.vertex", "end.vertex", "dependencies")
-  all_vertices <- data[[2]]
+  names(all_edges) <- c("start.vertex", "end.vertex")
   firstlvl_vertices <- data[[3]]
   github_pkg <- data[[4]]
+  if(includerootpkg & !is.null(githublink)){
+    all_vertices <- c(github_pkg, data[[2]])
+  } else {
+    all_vertices <- data[[2]]
+  }
+
+  #inedgel <- unique(c(as.character(all_edges[,1]), as.character(all_edges[,2])))
+  #inedgel[!inedgel %in% all_vertices]
 
   if (nrow(all_edges) == 0) {
     stop(("There are no dependencies"))
@@ -58,7 +76,11 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   # packages an verschiedenen Levels geladen wird. K.p. ob in solchen Fällen
   # der netplot anders aussehen müsste. Als Quickfix habe ich erstmal unique
   # genommen
-  uniqueVertices <- unique(all_vertices) # <- DAUERLÖSUNG??
+  if(includerootpkg & !is.null(githublink)){
+    uniqueVertices <- unique(c(github_pkg, all_vertices)) # <- DAUERLÖSUNG??
+  } else {
+    uniqueVertices <- unique(all_vertices) # <- DAUERLÖSUNG??
+  }
 
 
   net <- graph_from_data_frame(d=all_edges, vertices = uniqueVertices, directed = T)

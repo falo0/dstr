@@ -5,7 +5,7 @@
 #' @param githublink A link to a github repository of an R package
 #' @param pkg A list of packages from which we want to know the further
 #' dependencies. This list will be added to the first level dependencies
-#' of a given package on github it githublink is set
+#' of a given package on github it githublink is set.
 #' @export
 
 dstrsummary <- function(githublink = NULL, pkg = NULL){

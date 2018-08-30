@@ -5,19 +5,21 @@
 \title{Plot Dependencs Structure}
 \usage{
 plotdstr(githublink = NULL, pkg = NULL, includebasepkgs = F,
-  recursive = T)
+  recursive = T, includerootpkg = T)
 }
 \arguments{
 \item{githublink}{A link to a github repository of an R package}
 
 \item{pkg}{A list of packages from which we want to know the further
 dependencies. This list will be added to the first level dependencies
-of a given package on github it githublink is set}
+of a given package on github it githublink is set.}
 
-\item{includebasepkgs}{Whether to include base packages in the analysis or not}
+\item{includebasepkgs}{Whether to include base packages in the analysis.}
 
 \item{recursive}{Whether you want to look deeper than the second level of dependencies,
 e.g. get all dependencies of dependencies of dependencies ...}
+
+\item{includerootpkg}{Whether to include the root package in the plot.}
 }
 \description{
 This function plots the dependency structur of a package

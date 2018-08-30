@@ -19,8 +19,8 @@ will use all via \code{library()} attached packages as input packages.}
 \item{outtype}{Possible output types:
 \itemize{
 \item edgelist: An edge list, e.g. to be used for network plots.
-\item edgelist_detailed: An edge list, e.g. to be used for network plots, including
-information on the type of dependency.
+\item edgelist_inclusive: An edge list, e.g. to be used for network plots, including
+the root package itself when using a githublink.
 \item all_packages: An overview of all packages that are eventually loaded. No further
 structure visible.
 \item list: More detailed than allPKs, it's a list tha containns all packages per
