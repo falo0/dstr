@@ -65,8 +65,6 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   }
 
 
-  bigmat <- available.packages()
-
   if (!is.null(githublink) & is.null(pkg)){
     # only a github link and no vector of packages was given
     res <- firstlvldep(githublink, includeRootPkg = T)
