@@ -59,13 +59,21 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   base_pkgs <- rownames(installed.packages(priority="base"))
   rootPkgName <- NULL
 
+  # Got error message that object 'bigmat' was not found, so I define it here
+  # again as a quickfix, will look at it later. Should we not find a good solution in time
+  # that updates at least each time the package is used (CRAN is changing all the time),
+  # we need to remove sysdata.Rda again.
+  bigmat <- available.packages()
+
   if (is.null(githublink) & is.null(pkg)){
-    stop("No input package defined. Please define at least one package in 'pkg'
-         or a github repository of a R package.")
-  }
+    # Neither githublink nor localdir were set
+    # Assumption: The current working directory is the directory of an R package
+    res <- firstlvldep(includeRootPkg = T)
+    rootPkgName <- unname(res[[1]])
+    github_firstlvl <- res[[2]]
+    pkg <- res[[2]]
 
-
-  if (!is.null(githublink) & is.null(pkg)){
+  } else if (!is.null(githublink) & is.null(pkg)){
     # only a github link and no vector of packages was given
     res <- firstlvldep(githublink, includeRootPkg = T)
     rootPkgName <- unname(res[[1]])
@@ -81,6 +89,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     pkg <- unique(c(res[[2]], pkg))
   }
 
+  if(includebasepkgs == F){
+    pkg <- subset(pkg, !(pkg %in% base_pkgs))
+  }
 
   #create a vector of all needed packages (the vertices)
   frstlvllist <- tools::package_dependencies(pkg, recursive = recursive, which = deplevels, db=bigmat)

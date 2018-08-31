@@ -25,12 +25,19 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   bigmat <- available.packages()
   deplevels <- c("Imports", "Depends")
 
+
   #Create the edgelists
-  if(includerootpkg & !is.null(githublink)){
+  if((includerootpkg & !is.null(githublink)) |
+     (includerootpkg & is.null(githublink) & is.null(pkg))){
+    # Use either a package on github or in the current working directory
     data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
                        includebasepkgs = includebasepkgs,
                        outtype = c("edgelist_inclusive","all_packages",
-                                   "first_level_packages", "root_package"))
+                                  "first_level_packages", "root_package"))
+    # In case the package in the current working directory is used (because
+    # neither githublink nor pkg were set), further behavior should be as if
+    # a githublink was set.
+    githublink <- "Not NULL"
   } else {
     data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
                       includebasepkgs = includebasepkgs,

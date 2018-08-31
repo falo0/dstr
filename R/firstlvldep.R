@@ -10,25 +10,59 @@
 #' firstlvldep("https://github.com/tidyverse/ggplot2")
 
 
+
 firstlvldep <- function(githublink = NULL, localdir = NULL, includeRootPkg = F){
-  if(!is.null(githublink)){
+  if(!is.null(githublink) & is.null(localdir)){
+    # only githublink was set
     res <- helper_pkgname_rawlink(githublink)
     pkgname <- res[1]
     descfile <- readLines(res[2])
-  } else {
+  } else if(is.null(githublink) & !is.null(localdir)){
+    # only localdir was set
     pkgname <- "RootPKG"
 
     if (file_test("-f", localdir)){
       # the localdir leads directly to a file (asumption: a description file)
+      # Get the package name
+      splittedpath <- strsplit(localdir, "/")[[1]]
+      pkgname <- splittedpath[length(splittedpath) - 1]
+
+      # Read the DESCRIPTION file
       descfile <- readLines(localdir)
     } else if(dir.exists(localdir)){
       # localdir leads to a folder (assumption: folder of the package)
+
+      # Get the package name
+      splittedpath <- strsplit(localdir, "/")[[1]]
+      pkgname <- splittedpath[length(splittedpath)]
+
+      # Read the DESCRIPTION file
       descfile <- readLines(paste0(localdir, "/DESCRIPTION"))
     } else{
       stop("No such file ore directory")
     }
 
+  } else if(is.null(githublink) & is.null(localdir)){
+    # Neither githublink nor localdir were set
+    # Assumption: The current working directory is the directory of an R package
+    localdir <- getwd()
+
+    # Get the package name
+    splittedpath <- strsplit(localdir, "/")[[1]]
+    pkgname <- splittedpath[length(splittedpath)]
+
+    # Read the DESCRIPTION file
+    descfile <- readLines(paste0(localdir, "/DESCRIPTION"))
+
+
+  } else {
+    # both githublink and localdir were set
+    stop("Unexpected input. You can't specify both, githublink and localdir")
   }
+
+
+
+
   imports <- character()
   depends <- character()
   rangeOfImports <- F

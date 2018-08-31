@@ -17,21 +17,30 @@ dstr <- function(githublink = NULL, pkg = NULL){
   #githublink <- "tidyverse/ggplot2"
   #githublink <- "Stan125/GREA"
 
-  data <- nthlvldep(githublink, pkg, c("root_package", "unique_list_inclusive", "all_packages", "list"))
+
+  writeLines("Loading...\n")
+
+  data <- nthlvldep(githublink, pkg, c("root_package", "unique_list_inclusive",
+                                       "all_packages", "list"))
   uniquelist <- data[[2]]
   allpkg <- data[[3]]
   dlist <- data[[4]]
 
 
-  if(is.null(githublink)){
-    writeLines("--- DEPENDENCY STRUCTURE ANALYSIS ---\n")
-  } else if(is.null(pkg)){
-    writeLines(paste0("--- '", data[[1]], "' DEPENDENCY STRUCTURE ANALYSIS ---\n"))
+  if(is.null(githublink) & !is.null(pkg)){
+    writeLines(paste0("--- [dstr] DEPENDENCY STRUCTURE ANALYSIS OF { ",
+               paste0(pkg, collapse = ", ")," } ---"))
+  } else if(is.null(pkg) & !is.null(githublink)){
+    writeLines(paste0("--- [dstr] DEPENDENCY STRUCTURE ANALYSIS OF '", data[[1]],"' ---"))
+  } else if(!is.null(pkg) & !is.null(githublink)){
+    writeLines(paste0("--- [dstr] DEPENDENCY STRUCTURE ANALYSIS OF '", data[[1]],
+                      " + { ",paste0(pkg, collapse = ", ")," }' ---"))
   } else {
-    writeLines(paste0("--- '", data[[1]], " + pkg", "' DEPENDENCY STRUCTURE ANALYSIS ---\n"))
+    writeLines(paste0("--- [dstr] DEPENDENCY STRUCTURE ANALYSIS OF '", data[[1]],"' ---"))
   }
+  writeLines("Base packages are ignored in this analysis.")
+  writeLines("\n")
 
-  #writeLines("###############")
 
   writeLines(paste0("First Level Packages (", length(data[[2]]),")"))
   writeLines("---------------------------------------------------------")
@@ -111,8 +120,4 @@ dstr <- function(githublink = NULL, pkg = NULL){
   } else {
     writeLines("You don't have shared dependencies, e.g. none of the ulimatively loaded packages is loaded because of two or more first level packages.")
   }
-
-  #writeLines(c("First Level Packages",
-  #             data[[1]],
-  #             "All Eventually Loaded Packages (dependencies of dependencies of...)"))
 }
