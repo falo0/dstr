@@ -53,7 +53,10 @@ dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
                       length(data[[2]])," In Total)"))
   } else {
     # only pkg is set
-    writeLines(paste0("Input Packages From The 'pkg' Parameter (",
+    # writeLines(paste0("Input Packages From The 'pkg' Parameter (",
+    #                  length(data[[2]]),")"))
+    writeLines(paste0("First Level Dependencies (Packages Found In The DESCRIPTION File/s",
+                      "\nOf The Specified Package/s In The 'pkg' Parameter) (",
                       length(data[[2]]),")"))
   }
 

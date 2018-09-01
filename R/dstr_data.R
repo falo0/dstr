@@ -20,11 +20,11 @@
 #' \item all_packages: An overview of all packages that are eventually loaded. No further
 #' structure visible.
 #' \item network: An igraph network object which can directly be plotted.
-#' \item list: More detailed than allPKs, it's a list tha containns all packages per
+#' \item list: More detailed than all_packages, it's a list tha containns all packages per
 #' first level dependency.
-#' \item list_inclusive: like list but the first level dependencies are not only
+#' \item list_inclusive: like 'list' but the first level dependencies are not only
 #' used for the names of the list elements but also included in the list elements
-#' \item unique_list: like "list", just excluding all packages, that are eventually
+#' \item unique_list: like 'list', just excluding all packages, that are eventually
 #' also loaded by another package in firstlvldep. This way you can see which
 #' dependencies will be removed completely if you remove a certain first level
 #' dependency (a package that you import).
@@ -91,6 +91,13 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
     rootPkgName <- unname(res[[1]])
     github_firstlvl <- res[[2]]
     pkg <- unique(c(res[[2]], pkg))
+  } else {
+    # only pkg is set. In all other cases, pkg was seen as level 1 packages
+    # (on the same level as the dependencies in the description file of a package)
+    # now pkg has to be seen as the roo packages
+    rootPkgName <- pkg
+    pkg <- unique(unlist(tools::package_dependencies(pkg, recursive = F)))
+    github_firstlvl <- pkg
   }
 
   if(includebasepkgs == F){
@@ -230,7 +237,7 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
     } else {
       stop("outtype has to be at least one of the following (possibly a vector of
            several): edgelist, edgelist_inclusive, all_packages, list, list_inclusive,
-           unique_list, unique_list_inclusive, tree, first_level_packages, root_package")
+           unique_list, unique_list_inclusive, tree, network, first_level_packages, root_package")
     }
 
 
@@ -288,7 +295,7 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
       } else {
         stop("outtype has to be at least one of the following (possibly a vector of
            several): edgelist, edgelist_inclusive, all_packages, list, list_inclusive,
-             unique_list, unique_list_inclusive, tree, first_level_packages, root_package")
+             unique_list, unique_list_inclusive, tree, network, first_level_packages, root_package")
       }
     }
 
