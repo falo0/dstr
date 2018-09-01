@@ -21,6 +21,7 @@ This option is still valid in case of a of a given githublink.}
 the root package itself when using a githublink.
 \item all_packages: An overview of all packages that are eventually loaded. No further
 structure visible.
+\item network: An igraph network object which can directly be plotted.
 \item list: More detailed than allPKs, it's a list tha containns all packages per
 first level dependency.
 \item list_inclusive: like list but the first level dependencies are not only
@@ -46,5 +47,19 @@ github link. Returns "Root Package" when no github link was given.
 \description{
 Function takes package names as input and searches for their package
 dependencies. It returns the dependencies and dependencies of further
-dependencies. There are various options for the type of the output.
+dependencies. There are various options for the type of the output.It
+is poosible to select more than one outtype. This results in a list
+with each element one defined outtype.
+}
+\examples{
+
+network_object <- nthlvldep(githublink= "tidyverse/ggplot2", pkg="dplyr",
+recursive = TRUE, includebasepkgs = FALSE, outtype = "network")
+
+#plot(network_object, edge.arrow.size = .1, edge.color="darkgrey",vertex.size = 10,
+#           vertex.shape = "circle",vertex.frame.color = "white", vertex.label.font= 1,
+#            vertex.label.color = "black", vertex.color = "white",edge.width = 1.5,
+#            layout = layout_with_fr)
+
+
 }
