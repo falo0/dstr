@@ -4,6 +4,11 @@
 #'\code{dstr_network()} returns an igraph network object, which can be used for
 #' creating individual dependency graphs.
 #'
+#' #' The default assumption is that there is an R package in the current working
+#' directory and that the dependencies to be analyzed are given in the DESCRIPTION
+#' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+#' to be analyzed.
+#'
 #'@param githublink Link of type character to a github repository of a R package.
 #'
 #'@param pkg Character input of a packagename you want to plot the dependencies for.
