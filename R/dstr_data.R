@@ -96,7 +96,7 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
     # (on the same level as the dependencies in the description file of a package)
     # now pkg has to be seen as the roo packages
     rootPkgName <- pkg
-    pkg <- unique(unlist(tools::package_dependencies(pkg, recursive = F)))
+    pkg <- unique(unlist(tools::package_dependencies(pkg, recursive = F, which = deplevels, db=bigmat)))
     github_firstlvl <- pkg
   }
 
