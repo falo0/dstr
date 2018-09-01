@@ -3,14 +3,17 @@ Title: Effectively reducing package dependencies in own R projects
 Version: 0.1.0
 Authors@R: c(
 	person("Olaf", "Menssen", email = "o.menssen@me.com", role = c("aut", "cre")),
-	person("Christoph", "Albers", email = "christoph.albers01@stud.uni-goettingen.de", role = c("aut"))
+	person("Christoph", "Albers", email = "albers.christoph@email.de", role = c("aut"))
 	)
 Description: Provides the user with helpful tools for managing the dependency structure
 	of his own package and helps him identifying not necessarily needed packages.
 Depends: R (>= 3.4.2)
 Imports: igraph (>= 1.2.1)
+Suggests:testthat, 
+         ggnet2, 
+         qgraph
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0.9000
-Suggests: testthat
+
