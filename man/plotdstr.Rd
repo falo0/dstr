@@ -22,5 +22,11 @@ e.g. get all dependencies of dependencies of dependencies ...}
 \item{includerootpkg}{Whether to include the root package in the plot.}
 }
 \description{
-This function plots the dependency structur of a package
+This function plots the dependency structur of a package.
+}
+\details{
+The default assumption is that there is an R package in the current working
+directory and that the dependencies to be analyzed are given in the DESCRIPTION
+file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+to be analyzed.
 }

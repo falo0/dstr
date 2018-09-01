@@ -48,3 +48,9 @@ Function takes package names as input and searches for their package
 dependencies. It returns the dependencies and dependencies of further
 dependencies. There are various options for the type of the output.
 }
+\details{
+The default assumption is that there is an R package in the current working
+directory and that the dependencies to be analyzed are given in the DESCRIPTION
+file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+to be analyzed.
+}

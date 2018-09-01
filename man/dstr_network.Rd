@@ -26,6 +26,12 @@ igraph rules.
 \code{dstr_network()} returns an igraph network object, which can be used for
 creating individual dependency graphs.
 }
+\details{
+#' The default assumption is that there is an R package in the current working
+directory and that the dependencies to be analyzed are given in the DESCRIPTION
+file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+to be analyzed.
+}
 \examples{
 
 #network_object <- dstr_network(githublink = "falo0/dstr", pkg = "ggplot2")

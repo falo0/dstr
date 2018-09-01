@@ -17,3 +17,9 @@ of a given package on github it githublink is set.}
 This function gives a summary of the dependency structure of a given package
 and points out opportunities to eliminate depdendenceis completely.
 }
+\details{
+The default assumption is that there is an R package in the current working
+directory and that the dependencies to be analyzed are given in the DESCRIPTION
+file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+to be analyzed.
+}
