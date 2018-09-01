@@ -39,7 +39,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   if((includerootpkg & !is.null(githublink)) |
      (includerootpkg & is.null(githublink) & is.null(pkg))){
     # Use either a package on github or in the current working directory
-    data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
+    data <- dstr_data(githublink = githublink, pkg = pkg, recursive = recursive,
                        includebasepkgs = includebasepkgs,
                        outtype = c("edgelist_inclusive","all_packages",
                                   "first_level_packages", "root_package"))
@@ -48,7 +48,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
     # a githublink was set.
     githublink <- "Not NULL"
   } else {
-    data <- nthlvldep(githublink = githublink, pkg = pkg, recursive = recursive,
+    data <- dstr_data(githublink = githublink, pkg = pkg, recursive = recursive,
                       includebasepkgs = includebasepkgs,
                       outtype = c("edgelist","all_packages",
                                   "first_level_packages", "root_package"))

@@ -16,18 +16,9 @@
 
 dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
 
-  #pkg <- "miniCRAN"
-  #pkg <- c("ggplot2", "data.table")
-  #pkg <- NULL
-  #githublink <- NULL
-  #githublink <- "tidyverse/ggplot2"
-  #githublink <- "Stan125/GREA"
-  #githublink <- "tidyverse/tidyverse"
-
-
   writeLines("Loading...\n")
 
-  data <- nthlvldep(githublink, pkg, c("root_package", "unique_list_inclusive",
+  data <- dstr_data(githublink, pkg, c("root_package", "unique_list_inclusive",
                                        "all_packages", "list"),
                     includebasepkgs = includebasepkgs)
   uniquelist <- data[[2]]

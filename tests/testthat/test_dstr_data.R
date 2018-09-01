@@ -1,17 +1,17 @@
-context("does nthlvldep perform right?")
+context("does dstr_data perform right?")
 
 library("dstr")
 library("testthat")
 
-result <- nthlvldep(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="all_packages")
-result2 <- nthlvldep(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="tree")
-result3 <- nthlvldep(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="edgelist")
-result4 <- nthlvldep(pkg="dplyr", recursive=F, includebasepkgs = F, outtype="all_packages")
-result5 <- nthlvldep(pkg="dplyr", recursive=F, includebasepkgs = F, outtype="list")
+result <- dstr_data(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="all_packages")
+result2 <- dstr_data(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="tree")
+result3 <- dstr_data(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="edgelist")
+result4 <- dstr_data(pkg="dplyr", recursive=F, includebasepkgs = F, outtype="all_packages")
+result5 <- dstr_data(pkg="dplyr", recursive=F, includebasepkgs = F, outtype="list")
 
 base_pkgs <- rownames(installed.packages(priority="base"))
 
-test_that("nthlvldep returns no base_pkgs when includebasepkgs=F",{
+test_that("dstr_data returns no base_pkgs when includebasepkgs=F",{
 
   #function which checks for any base pkgs
   check_base <- function(x){
