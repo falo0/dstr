@@ -42,9 +42,10 @@
 #'
 #' @examples
 #'
-#'network_object <- nthlvldep(githublink= "tidyverse/ggplot2", pkg="dplyr",
+#'network_object <- dstr_data(githublink= "tidyverse/ggplot2", pkg="dplyr",
 #' recursive = TRUE, includebasepkgs = FALSE, outtype = "network")
 #'
+#'#needs package igraph attached:
 #'#plot(network_object, edge.arrow.size = .1, edge.color="darkgrey",vertex.size = 10,
 #'#           vertex.shape = "circle",vertex.frame.color = "white", vertex.label.font= 1,
 #'#            vertex.label.color = "black", vertex.color = "white",edge.width = 1.5,
@@ -55,28 +56,17 @@
 #' @importFrom utils available.packages installed.packages read.csv
 
 
-nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
+dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
                       includebasepkgs = F, recursive = T){
 
-  # ------- For testing only ---
-  #githublink = "Stan125/GREA"
-  #githublink = "tidyverse/tidyverse"
-  #githublink = "falo0/dstr"
-  #githublink = NULL
-  #githublink = "tidyverse/ggplot2"
-  #pkg = "NightDay"
 
-  # ----------------------------
   deplevels <- c("Imports","Depends")
 
   #read the list of base packages
   base_pkgs <- rownames(installed.packages(priority="base"))
   rootPkgName <- NULL
 
-  # Got error message that object 'bigmat' was not found, so I define it here
-  # again as a quickfix, will look at it later. Should we not find a good solution in time
-  # that updates at least each time the package is used (CRAN is changing all the time),
-  # we need to remove sysdata.Rda again.
+
   bigmat <- utils::available.packages(repos= "https://cloud.r-project.org")
 
   if (is.null(githublink) & is.null(pkg)){
@@ -227,7 +217,6 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
       return(create_unique_list(frstlvllistinclusive))
     } else if (outtype == "tree"){
       treeDF <- edges2tree(result_df[,-3], lvl1deps = pkg)
-      # Optionally replace NA by "" so it is nicer to look at. Not sure if we should keep this
       treeDF[is.na(treeDF)] <- ""
       return(treeDF)
     } else if (outtype == "first_level_packages"){
@@ -302,8 +291,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
              unique_list, unique_list_inclusive, tree, first_level_packages, root_package")
       }
     }
-    #print(outtype)
-    #print(outlist)
+
 
     names(outlist) <- outtype
     return(outlist)
