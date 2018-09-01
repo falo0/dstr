@@ -1,17 +1,25 @@
-#' Plot Dependencs Structure
+#' Plot Dependency Structure
 #'
-#' This function plots the dependency structur of a package.
+#' This function plots the dependency structur of one or more packages.
 #'
 #' The default assumption is that there is an R package in the current working
 #' directory and that the dependencies to be analyzed are given in the DESCRIPTION
 #' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
 #' to be analyzed.
+#'
 #' @param githublink A link to a github repository of an R package
 #' @param pkg A vector of packages from which we want to know the further
 #' dependencies.
 #' @param includebasepkgs Whether to include base packages in the analysis.
 #' @param includerootpkg Whether to include the root package in the plot.
 #' @param recursive show dependencies of dependencies.
+#'
+#' @note
+#' The graph is created by using the Fruchterman-Reingold-Algorithm. A problem
+#' for those graphs can be overlapping of the vertex labels. If this is the case
+#' the authors suggest to use dstr_data for creating either a network object
+#' which layout options can be modified for plotting or an edgelist, which can be used in
+#' combination with other packages such 'qgraph' or 'ggnet'.
 #' @import igraph
 #' @export
 #' @importFrom graphics mtext plot
@@ -95,8 +103,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   net <- graph_from_data_frame(d=all_edges, vertices = uniqueVertices, directed = T)
 
 
-  l <- layout_with_fr(net) * 2 #define the network algortihm to the "Fruchterman Reingold"-Algorithm
-
+  l <- layout_with_fr(net) #define the network algortihm to the "Fruchterman Reingold"-Algorithm
   #color vertices depending on input, firstlvl or other
   V(net)$vcolor <- ifelse(V(net)$name %in% pkg,"steelblue", ifelse(V(net)$name %in% firstlvl_vertices | V(net)$name %in% firstlvl_vertices_cran, "orange","black"))
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotdstr.R
 \name{plotdstr}
 \alias{plotdstr}
-\title{Plot Dependencs Structure}
+\title{Plot Dependency Structure}
 \usage{
 plotdstr(githublink = NULL, pkg = NULL, includebasepkgs = F,
   recursive = T, includerootpkg = T)
@@ -10,23 +10,28 @@ plotdstr(githublink = NULL, pkg = NULL, includebasepkgs = F,
 \arguments{
 \item{githublink}{A link to a github repository of an R package}
 
-\item{pkg}{A list of packages from which we want to know the further
-dependencies. This list will be added to the first level dependencies
-of a given package on github it githublink is set.}
+\item{pkg}{A vector of packages from which we want to know the further
+dependencies.}
 
 \item{includebasepkgs}{Whether to include base packages in the analysis.}
 
-\item{recursive}{Whether you want to look deeper than the second level of dependencies,
-e.g. get all dependencies of dependencies of dependencies ...}
+\item{recursive}{show dependencies of dependencies.}
 
 \item{includerootpkg}{Whether to include the root package in the plot.}
 }
 \description{
-This function plots the dependency structur of a package.
+This function plots the dependency structur of one or more packages.
 }
 \details{
 The default assumption is that there is an R package in the current working
 directory and that the dependencies to be analyzed are given in the DESCRIPTION
 file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
 to be analyzed.
+}
+\note{
+The graph is created by using the Fruchterman-Reingold-Algorithm. A problem
+for those graphs can be overlapping of the vertex labels. If this is the case
+the authors suggest to use dstr_data for creating either a network object
+which layout options can be modified for plotting or an edgelist, which can be used in
+combination with other packages such 'qgraph' or 'ggnet'.
 }
