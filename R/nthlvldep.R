@@ -4,12 +4,10 @@
 #' dependencies. It returns the dependencies and dependencies of further
 #' dependencies. There are various options for the type of the output.It
 #' is poosible to select more than one outtype. This results in a list
-#' with each element one defined outtype.
-#'
-#' The default assumption is that there is an R package in the current working
-#' directory and that the dependencies to be analyzed are given in the DESCRIPTION
-#' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
-#' to be analyzed.
+#' with each element one defined outtype.The default assumption is that there is
+#' an R package in the current working directory and that the dependencies to be
+#' analyzed are given in the DESCRIPTION file. Use the parameters ‘githublink’
+#' and/or 'pkg' to alter the package/s to be analyzed.
 #' @param githublink A link to a github repository of an R package.
 #' @param pkg Character input of a packagename you want to see the
 #' dependencies of. Multiple input packages can be given in vector format.
