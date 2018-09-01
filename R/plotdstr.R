@@ -1,6 +1,11 @@
 #' Plot Dependencs Structure
 #'
-#' This function plots the dependency structur of a package
+#' This function plots the dependency structur of a package.
+#'
+#' The default assumption is that there is an R package in the current working
+#' directory and that the dependencies to be analyzed are given in the DESCRIPTION
+#' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+#' to be analyzed.
 #' @param githublink A link to a github repository of an R package
 #' @param pkg A list of packages from which we want to know the further
 #' dependencies. This list will be added to the first level dependencies
@@ -21,6 +26,8 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   #includebasepkgs <- F
   #githublink <- "tidyverse/ggplot2"
   #githublink <- NULL
+
+  writeLines("Loading...")
 
   bigmat <- available.packages()
   deplevels <- c("Imports", "Depends")
