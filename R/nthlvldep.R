@@ -4,6 +4,10 @@
 #' dependencies. It returns the dependencies and dependencies of further
 #' dependencies. There are various options for the type of the output.
 #'
+#' The default assumption is that there is an R package in the current working
+#' directory and that the dependencies to be analyzed are given in the DESCRIPTION
+#' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+#' to be analyzed.
 #' @param githublink A link to a github repository of an R package.
 #' @param pkg Character input of a packagename you want to see the
 #' dependencies of. Multiple input packages can be given in vector format.
@@ -41,9 +45,9 @@
 nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
                       includebasepkgs = F, recursive = T){
 
-
   # ------- For testing only ---
   #githublink = "Stan125/GREA"
+  #githublink = "tidyverse/tidyverse"
   #githublink = "falo0/dstr"
   #githublink = NULL
   #githublink = "tidyverse/ggplot2"
@@ -95,9 +99,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
 
   #create a vector of all needed packages (the vertices)
   frstlvllist <- tools::package_dependencies(pkg, recursive = recursive, which = deplevels, db=bigmat)
-  allpkgs <- unique(unname(unlist(frstlvllist)))
-
-  allpkgs <- c(pkg,allpkgs)
+  allpkgs <- unique(c(pkg, unname(unlist(frstlvllist))))
 
 
   #create a function which takes a pkgname as input and returns a dataframe with the
