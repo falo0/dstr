@@ -7,29 +7,23 @@
 #' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
 #' to be analyzed.
 #' @param githublink A link to a github repository of an R package
-#' @param pkg A list of packages from which we want to know the further
-#' dependencies. This list will be added to the first level dependencies
-#' of a given package on github it githublink is set.
+#' @param pkg A vector of packages from which we want to know the further
+#' dependencies.
 #' @param includebasepkgs Whether to include base packages in the analysis.
 #' @param includerootpkg Whether to include the root package in the plot.
-#' @param recursive Whether you want to look deeper than the second level of dependencies,
-#' e.g. get all dependencies of dependencies of dependencies ...
+#' @param recursive show dependencies of dependencies.
 #' @import igraph
 #' @export
 #' @importFrom graphics mtext plot
 
 plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive = T,
                      includerootpkg = T){
-  #pkg <- frst
   #pkg <- c("NightDay", "data.table", "gtable")
-  #recursive <- T
-  #includebasepkgs <- F
-  #githublink <- "tidyverse/ggplot2"
-  #githublink <- NULL
+
 
   writeLines("Loading...")
 
-  bigmat <- available.packages()
+  bigmat <- available.packages(repos= "https://cloud.r-project.org")
   deplevels <- c("Imports", "Depends")
 
 
@@ -77,6 +71,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   #identify first level dependencies
   firstlvl <- all_edges$start.vertex %in% pkg
   all_edges$firstlevel <- firstlvl
+  firstlvl_vertices_cran <- all_edges$end.vertex[which(all_edges$firstlevel ==T)]
 
   # Ich glaube daruf geht der Code weiter unten schon ein, bin mir nicht ganz sicher:
   # Es kann auch first level packages geben, die selbst keine depencendies haben
@@ -103,7 +98,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   l <- layout_with_fr(net) * 2 #define the network algortihm to the "Fruchterman Reingold"-Algorithm
 
   #color vertices depending on input, firstlvl or other
-  V(net)$vcolor <- ifelse(V(net)$name %in% pkg,"steelblue", ifelse(V(net)$name %in% firstlvl_vertices, "orange","black"))
+  V(net)$vcolor <- ifelse(V(net)$name %in% pkg,"steelblue", ifelse(V(net)$name %in% firstlvl_vertices | V(net)$name %in% firstlvl_vertices_cran, "orange","black"))
 
   V(net)$label.cex <- 1
   V(net)$label.cex[which(V(net)$name %in% pkg)] <- 1.2
