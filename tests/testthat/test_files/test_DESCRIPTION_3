@@ -1,5 +1,5 @@
-A Thing: 
-Another Thing asdfasdnw, asdfsa,e 
+A Thing:
+Another Thing asdfasdnw, asdfsa,e
 Depends:
     R 				(>= 3.1)
 Something Else:
@@ -14,9 +14,7 @@ Imports: digest,
     	rlang (>= 0.2.1),       scales(>= 0.5.0),
     stats,
     tibble,
-    viridisLite, 
-
-
+    viridisLite,
     withr(>= 2.0.0)
   NextTitle: asdfbasdl
 abalas

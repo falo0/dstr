@@ -1,3 +1,5 @@
+context("does edges2tree work correctly?")
+library("dstr")
 # ---------- edges2tree() Tests ---------- #
 
 # setwd("./tests/testthat")
