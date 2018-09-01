@@ -36,7 +36,7 @@ test_that("output is equal to tools package_dependencies()",{
                                           recursive=T)))
  true_deps <- true_deps[which(!true_deps %in% base_pkgs)]
 
- expect_true(length(true_deps) == (length(result)-1))
+ expect_true(length(true_deps) == (length(result)))
  expect_true(all(true_deps %in% result))
   })
 
