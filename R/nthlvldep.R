@@ -2,7 +2,9 @@
 #'
 #' Function takes package names as input and searches for their package
 #' dependencies. It returns the dependencies and dependencies of further
-#' dependencies. There are various options for the type of the output.
+#' dependencies. There are various options for the type of the output.It
+#' is poosible to select more than one outtype. This results in a list
+#' with each element one defined outtype.
 #'
 #' @param githublink A link to a github repository of an R package.
 #' @param pkg Character input of a packagename you want to see the
@@ -15,6 +17,7 @@
 #' the root package itself when using a githublink.
 #' \item all_packages: An overview of all packages that are eventually loaded. No further
 #' structure visible.
+#' \item network: An igraph network object which can directly be plotted.
 #' \item list: More detailed than allPKs, it's a list tha containns all packages per
 #' first level dependency.
 #' \item list_inclusive: like list but the first level dependencies are not only
@@ -34,6 +37,18 @@
 #' }
 #' @param includebasepkgs Whether to include base packages in the analysis or not.
 #' @param recursive If TRUE dependencies of dependencies of ... are considered.
+#'
+#' @examples
+#'
+#'network_object <- nthlvldep(githublink= "tidyverse/ggplot2", pkg="dplyr",
+#' recursive = TRUE, includebasepkgs = FALSE, outtype = "network")
+#'
+#'#plot(network_object, edge.arrow.size = .1, edge.color="darkgrey",vertex.size = 10,
+#'#           vertex.shape = "circle",vertex.frame.color = "white", vertex.label.font= 1,
+#'#            vertex.label.color = "black", vertex.color = "white",edge.width = 1.5,
+#'#            layout = layout_with_fr)
+#'
+#'
 #' @export
 #' @importFrom utils available.packages installed.packages read.csv
 
@@ -48,10 +63,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   #githublink = NULL
   #githublink = "tidyverse/ggplot2"
   #pkg = "NightDay"
-  #pkg = NULL
-  #pkg = c("miniCRAN", "ggplot2")
-  #recursive = T
-  #includebasepkgs = F
+
   # ----------------------------
   deplevels <- c("Imports","Depends")
 
@@ -63,7 +75,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   # again as a quickfix, will look at it later. Should we not find a good solution in time
   # that updates at least each time the package is used (CRAN is changing all the time),
   # we need to remove sysdata.Rda again.
-  bigmat <- available.packages()
+  bigmat <- utils::available.packages(repos= "https://cloud.r-project.org")
 
   if (is.null(githublink) & is.null(pkg)){
     # Neither githublink nor localdir were set
@@ -180,13 +192,21 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
     }
   }
 
-  if(length(outtype) == 1){
+
+    if(length(outtype) == 1){
     if(outtype == "edgelist"){
       return(result_df[,-3])
     } else if (outtype == "edgelist_inclusive"){
       result_df <- include_root_in_edgelist(result_df[,-3])
       remove_base_pkgs()
       return(result_df)
+    } else if (outtype == "network"){
+      result_df <- include_root_in_edgelist(result_df[,-3])
+      network <- igraph::graph_from_data_frame(d=result_df, directed = T)
+      if(length(V(network)) == 0){
+        warning("Your network object has no vertices. There are no dependencies.")
+      }
+      return(network)
     } else if (outtype == "all_packages"){
       return(allpkgs)
     } else if (outtype == "list"){
@@ -226,7 +246,7 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
 
 
 
-  } else if (length(outtype) > 1){
+  } else if (length(outtype) > 1){ # more than one outtype required
 
     #outtype <- c("edgelist", "allpackges")
 
@@ -238,6 +258,13 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
         result_df <- include_root_in_edgelist(result_df[,-3])
         remove_base_pkgs()
         outlist[[length(outlist)+1]] <- result_df
+      } else if(outtype[i] == "network"){
+        result_df <- include_root_in_edgelist(result_df[,-3])
+        network <- igraph::graph_from_data_frame(d=result_df, directed = T)
+        if(length(V(network)) == 0){
+          warning("Your network object has no vertices. There are no dependencies.")
+        }
+        outlist[[length(outlist)+1]] <- network
       } else if (outtype[i] == "all_packages"){
         outlist[[length(outlist)+1]] <- allpkgs
       } else if (outtype[i] == "list"){
@@ -287,6 +314,9 @@ nthlvldep <- function(githublink = NULL, pkg = NULL, outtype,
   }
 
 }
+
+
+
 
 
 
