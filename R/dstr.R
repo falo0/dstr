@@ -52,22 +52,35 @@ dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
   }
   writeLines("\n")
 
+  if(is.null(pkg)){
+    writeLines(paste0("First Level Dependencies (Packages Found In The DESCRIPTION File) (",
+                      length(data[[2]]),")"))
+  } else if (!is.null(githublink)){
+    # both githublink and pkg are set
+    writeLines(paste0("First Level Dependencies (Packages Found In The DESCRIPTION File)",
+                      "\n+ Input Packages From The 'pkg' Parameter (",
+                      length(data[[2]])," In Total)"))
+  } else {
+    # only pkg is set
+    writeLines(paste0("Input Packages From The 'pkg' Parameter (",
+                      length(data[[2]]),")"))
+  }
 
-  writeLines(paste0("First Level Packages (", length(data[[2]]),")"))
-  writeLines("---------------------------------------------------------")
+  paragraphsep___ <- paste0(rep("-", 80), collapse = "")
+  writeLines(paragraphsep___)
   #writeLines(paste(names(data[[2]]), collapse = ", "))
   print(names(data[[2]]))
 
   writeLines("\n")
 
   writeLines(paste("All", length(data[[3]]), "Eventually Loaded Packages (Dependencies Of Dependencies Of...)"))
-  writeLines("---------------------------------------------------------")
+  writeLines(paragraphsep___)
   print(data[[3]])
 
   writeLines("\n")
 
   writeLines("Opportunities To Reduce Dependencies (Iterating Through All First Level Dependencies)")
-  writeLines("---------------------------------------------------------")
+  writeLines(paragraphsep___)
   # Sort the list so that packages with most dependencies are first in list
   uniquelist <- uniquelist[names(sort(sapply(uniquelist, length),
                                       decreasing = T))]
@@ -100,7 +113,7 @@ dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
   }
 
   writeLines("Shared Dependencies / Hard To Remove")
-  writeLines("---------------------------------------------------------")
+  writeLines(paragraphsep___)
 
   shareddeps <- list()
   for(i in 1:length(allpkg)){
