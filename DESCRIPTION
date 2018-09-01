@@ -9,9 +9,7 @@ Description: Provides the user with helpful tools for managing the dependency st
 	of his own package and helps him identifying not necessarily needed packages.
 Depends: R (>= 3.4.2)
 Imports: igraph (>= 1.2.1)
-Suggests:testthat, 
-         ggnet2, 
-         qgraph
+Suggests:testthat
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

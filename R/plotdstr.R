@@ -19,7 +19,7 @@
 #' for those graphs can be overlapping of the vertex labels. If this is the case
 #' the authors suggest to use dstr_data for creating either a network object
 #' which layout options can be modified for plotting or an edgelist, which can be used in
-#' combination with other packages such 'qgraph' or 'ggnet'.
+#' combination with other packages such 'qgraph' or 'ggnet2'.
 #' @import igraph
 #' @export
 #' @importFrom graphics mtext plot
