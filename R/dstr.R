@@ -7,13 +7,14 @@
 #' directory and that the dependencies to be analyzed are given in the DESCRIPTION
 #' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
 #' to be analyzed.
-#' @param githublink A link to a github repository of an R package
+#' @param githublink A link to a github repository of an R package.
 #' @param pkg A list of packages from which we want to know the further
 #' dependencies. This list will be added to the first level dependencies
 #' of a given package on github it githublink is set.
+#' @param includebasepkgs Whether to include base packages in the analysis.
 #' @export
 
-dstr <- function(githublink = NULL, pkg = NULL){
+dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
 
   #pkg <- "miniCRAN"
   #pkg <- c("ggplot2", "data.table")
@@ -27,7 +28,8 @@ dstr <- function(githublink = NULL, pkg = NULL){
   writeLines("Loading...\n")
 
   data <- nthlvldep(githublink, pkg, c("root_package", "unique_list_inclusive",
-                                       "all_packages", "list"))
+                                       "all_packages", "list"),
+                    includebasepkgs = includebasepkgs)
   uniquelist <- data[[2]]
   allpkg <- data[[3]]
   dlist <- data[[4]]
@@ -44,25 +46,41 @@ dstr <- function(githublink = NULL, pkg = NULL){
   } else {
     writeLines(paste0("--- [dstr] DEPENDENCY STRUCTURE ANALYSIS OF '", data[[1]],"' ---"))
   }
-  writeLines("Base packages are ignored in this analysis.")
+
+  if(!includebasepkgs){
+    writeLines("Base packages are ignored in this analysis.")
+  }
   writeLines("\n")
 
+  if(is.null(pkg)){
+    writeLines(paste0("First Level Dependencies (Packages Found In The DESCRIPTION File) (",
+                      length(data[[2]]),")"))
+  } else if (!is.null(githublink)){
+    # both githublink and pkg are set
+    writeLines(paste0("First Level Dependencies (Packages Found In The DESCRIPTION File)",
+                      "\n+ Input Packages From The 'pkg' Parameter (",
+                      length(data[[2]])," In Total)"))
+  } else {
+    # only pkg is set
+    writeLines(paste0("Input Packages From The 'pkg' Parameter (",
+                      length(data[[2]]),")"))
+  }
 
-  writeLines(paste0("First Level Packages (", length(data[[2]]),")"))
-  writeLines("---------------------------------------------------------")
+  paragraphsep___ <- paste0(rep("-", 80), collapse = "")
+  writeLines(paragraphsep___)
   #writeLines(paste(names(data[[2]]), collapse = ", "))
   print(names(data[[2]]))
 
   writeLines("\n")
 
   writeLines(paste("All", length(data[[3]]), "Eventually Loaded Packages (Dependencies Of Dependencies Of...)"))
-  writeLines("---------------------------------------------------------")
+  writeLines(paragraphsep___)
   print(data[[3]])
 
   writeLines("\n")
 
   writeLines("Opportunities To Reduce Dependencies (Iterating Through All First Level Dependencies)")
-  writeLines("---------------------------------------------------------")
+  writeLines(paragraphsep___)
   # Sort the list so that packages with most dependencies are first in list
   uniquelist <- uniquelist[names(sort(sapply(uniquelist, length),
                                       decreasing = T))]
@@ -95,7 +113,7 @@ dstr <- function(githublink = NULL, pkg = NULL){
   }
 
   writeLines("Shared Dependencies / Hard To Remove")
-  writeLines("---------------------------------------------------------")
+  writeLines(paragraphsep___)
 
   shareddeps <- list()
   for(i in 1:length(allpkg)){

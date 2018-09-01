@@ -4,14 +4,16 @@
 \alias{dstr}
 \title{Dependency Summary}
 \usage{
-dstr(githublink = NULL, pkg = NULL)
+dstr(githublink = NULL, pkg = NULL, includebasepkgs = F)
 }
 \arguments{
-\item{githublink}{A link to a github repository of an R package}
+\item{githublink}{A link to a github repository of an R package.}
 
 \item{pkg}{A list of packages from which we want to know the further
 dependencies. This list will be added to the first level dependencies
 of a given package on github it githublink is set.}
+
+\item{includebasepkgs}{Whether to include base packages in the analysis.}
 }
 \description{
 This function gives a summary of the dependency structure of a given package
