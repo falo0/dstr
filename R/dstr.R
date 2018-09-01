@@ -2,6 +2,11 @@
 #'
 #' This function gives a summary of the dependency structure of a given package
 #' and points out opportunities to eliminate depdendenceis completely.
+#'
+#' The default assumption is that there is an R package in the current working
+#' directory and that the dependencies to be analyzed are given in the DESCRIPTION
+#' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
+#' to be analyzed.
 #' @param githublink A link to a github repository of an R package
 #' @param pkg A list of packages from which we want to know the further
 #' dependencies. This list will be added to the first level dependencies
@@ -16,6 +21,7 @@ dstr <- function(githublink = NULL, pkg = NULL){
   #githublink <- NULL
   #githublink <- "tidyverse/ggplot2"
   #githublink <- "Stan125/GREA"
+  #githublink <- "tidyverse/tidyverse"
 
 
   writeLines("Loading...\n")
@@ -55,31 +61,36 @@ dstr <- function(githublink = NULL, pkg = NULL){
 
   writeLines("\n")
 
-  writeLines("Opportunities To Reduce Dependencies")
+  writeLines("Opportunities To Reduce Dependencies (Iterating Through All First Level Dependencies)")
   writeLines("---------------------------------------------------------")
   # Sort the list so that packages with most dependencies are first in list
   uniquelist <- uniquelist[names(sort(sapply(uniquelist, length),
                                       decreasing = T))]
 
   for (j in 1:length(uniquelist)){
+    if(length(uniquelist[[j]]) > 1){
     writeLines(paste0("If you remove '", names(uniquelist)[j],
                  "' you will remove the following ", length(uniquelist[[j]]),
                                                            " packages completely:"))
-
-    if(length(uniquelist[[j]]) == 0){
+      print(uniquelist[[j]])
+    } else if (length(uniquelist[[j]]) == 1){
+      writeLines(paste0("If you remove '", names(uniquelist)[j],
+                        "' you will remove the following ", length(uniquelist[[j]]),
+                        " package completely:"))
+      print(uniquelist[[j]])
+    } else {
+      #length(uniquelist[[j]]) == 0
       #sought <- "shiny"
       sought <- names(uniquelist)[j]
 
       soughtinlist <- sapply(dlist, function(x) sought %in% x)
       loaders <- names(soughtinlist)[soughtinlist]
 
-      writeLines(paste0("Zero other packages and also not '", names(uniquelist)[j],
-                   "' istelf because it is a deeper level depencendy from the following first level dependencies:"))
+      writeLines(paste0("If you remove '", names(uniquelist)[j],"' you will remove 0 other packages and also not '", names(uniquelist)[j],
+                   "' istelf because it is a deeper level dependency from the following first level dependencies:"))
       print(loaders)
-    } else {
-      #print(paste0("The following ", length(uniquelist[[j]]), " packages:"))
-      print(uniquelist[[j]])
     }
+
     writeLines("\n")
   }
 
@@ -88,7 +99,6 @@ dstr <- function(githublink = NULL, pkg = NULL){
 
   shareddeps <- list()
   for(i in 1:length(allpkg)){
-
     soughtinlist <- sapply(dlist, function(y) allpkg[i] %in% y)
     loaders <- names(soughtinlist)[soughtinlist]
     if(length(loaders) > 1){
@@ -103,9 +113,12 @@ dstr <- function(githublink = NULL, pkg = NULL){
                                         decreasing = T))]
 
     unique_loaders <- unique(shareddeps)
+
+
+    #sapply(shareddeps, function(x){all(x == y)})
     collapsed_loaded <- lapply(unique_loaders,
                                function(y) names(shareddeps)[sapply(shareddeps,
-                                                     function(x){all(x == y)})])
+                                                     function(x){identical(x, y)})])
     for(i in 1:length(unique_loaders)){
       #writeLines(paste0("The packages '", paste(collapsed_loaded[[i]], collapse = ", "),
       #             "' are loaded by your (",length(unique_loaders[[i]]) ,") first level packages '",
