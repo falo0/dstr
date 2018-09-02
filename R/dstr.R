@@ -14,12 +14,12 @@
 #' @param includebasepkgs Whether to include base packages in the analysis.
 #' @export
 
-dstr_summary <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
+dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
 
   writeLines("Loading...\n")
 
-  data <- dstr_data(githublink, pkg, c("root_package", "unique_list_inclusive",
-                                       "all_packages", "list"),
+  data <- dstr_data(githublink, pkg, c("root", "unique2",
+                                       "all", "list"),
                     includebasepkgs = includebasepkgs)
   uniquelist <- data[[2]]
   allpkg <- data[[3]]
@@ -91,8 +91,7 @@ dstr_summary <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
                         " package completely:"))
       print(uniquelist[[j]])
     } else {
-      #length(uniquelist[[j]]) == 0
-      #sought <- "shiny"
+
       sought <- names(uniquelist)[j]
 
       soughtinlist <- sapply(dlist, function(x) sought %in% x)

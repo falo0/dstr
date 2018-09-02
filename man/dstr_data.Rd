@@ -17,26 +17,26 @@ This option is still valid in case of a of a given githublink.}
 \item{outtype}{Possible output types:
 \itemize{
 \item edgelist: An edge list, e.g. to be used for network plots.
-\item edgelist_inclusive: An edge list, e.g. to be used for network plots, including
+\item edgelist2: An edge list, e.g. to be used for network plots, including
 the root package itself when using a githublink.
-\item all_packages: An overview of all packages that are eventually loaded. No further
+\item all: An overview of all packages that are eventually loaded. No further
 structure visible.
 \item network: An igraph network object which can directly be plotted.
-\item list: More detailed than all_packages, it's a list tha containns all packages per
+\item list: More detailed than all, it's a list tha containns all packages per
 first level dependency.
-\item list_inclusive: like 'list' but the first level dependencies are not only
+\item list2: like 'list' but the first level dependencies are not only
 used for the names of the list elements but also included in the list elements
-\item unique_list: like 'list', just excluding all packages, that are eventually
+\item unique: like 'list', just excluding all packages, that are eventually
 also loaded by another package in firstlvldep. This way you can see which
 dependencies will be removed completely if you remove a certain first level
 dependency (a package that you import).
-\item unique_list_inclusive: like unique_list, but each first level dependency
+\item unique2: like unique, but each first level dependency
 is included in the corresponding list element IF it is a unique dependency.
 \item tree: Detailed information about which package depends on which, represented
 in a data frame that is showing a tree structure.
-\item first_level_packages: The vector of packages used as input. This is a combination
+\item lvl1: The vector of packages used as input. This is a combination
 when both the githublink and the pkg parameter are set.
-\item root_package: Whether to include the name of the package of the given
+\item root: Whether to include the name of the package of the given
 github link. Returns "Root Package" when no github link was given.
 }}
 

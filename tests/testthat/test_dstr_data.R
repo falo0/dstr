@@ -3,10 +3,10 @@ context("does dstr_data perform right?")
 library("dstr")
 library("testthat")
 
-result <- dstr_data(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="all_packages")
+result <- dstr_data(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="all")
 result2 <- dstr_data(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="tree")
 result3 <- dstr_data(pkg="dplyr", recursive=T, includebasepkgs = F, outtype="edgelist")
-result4 <- dstr_data(pkg="dplyr", recursive=F, includebasepkgs = F, outtype="all_packages")
+result4 <- dstr_data(pkg="dplyr", recursive=F, includebasepkgs = F, outtype="all")
 result5 <- dstr_data(pkg="dplyr", recursive=F, includebasepkgs = F, outtype="list")
 
 base_pkgs <- rownames(installed.packages(priority="base"))

@@ -26,7 +26,6 @@
 
 plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive = T,
                      includerootpkg = T){
-  #pkg <- c("NightDay", "data.table", "gtable")
 
 
   writeLines("Loading...")
@@ -41,8 +40,8 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
     # Use either a package on github or in the current working directory
     data <- dstr_data(githublink = githublink, pkg = pkg, recursive = recursive,
                        includebasepkgs = includebasepkgs,
-                       outtype = c("edgelist_inclusive","all_packages",
-                                  "first_level_packages", "root_package"))
+                       outtype = c("edgelist2","all",
+                                  "lvl1", "root"))
     # In case the package in the current working directory is used (because
     # neither githublink nor pkg were set), further behavior should be as if
     # a githublink was set.
@@ -50,8 +49,8 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   } else {
     data <- dstr_data(githublink = githublink, pkg = pkg, recursive = recursive,
                       includebasepkgs = includebasepkgs,
-                      outtype = c("edgelist","all_packages",
-                                  "first_level_packages", "root_package"))
+                      outtype = c("edgelist","all",
+                                  "lvl1", "root"))
   }
 
   all_edges <- data[[1]]
@@ -64,16 +63,11 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
     all_vertices <- data[[2]]
   }
 
-  #inedgel <- unique(c(as.character(all_edges[,1]), as.character(all_edges[,2])))
-  #inedgel[!inedgel %in% all_vertices]
+
 
   if (nrow(all_edges) == 0) {
     stop(("There are no dependencies"))
-    # Feature request: Is it possible to only draw the packages in "pkg"
-    # (which are not connected to anything of course) and then give this warning?
-    # warning("There are no dependencies")
-    # This is probably the behavior the user expects instead of an error message
-    # denying to plot anything
+
   }
 
   #identify first level dependencies
@@ -81,22 +75,11 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   all_edges$firstlevel <- firstlvl
   firstlvl_vertices_cran <- all_edges$end.vertex[which(all_edges$firstlevel ==T)]
 
-  # Ich glaube daruf geht der Code weiter unten schon ein, bin mir nicht ganz sicher:
-  # Es kann auch first level packages geben, die selbst keine depencendies haben
-  # Diese sollten auch im netplot erscheinen (die schweben dann halt alleine
-  # ohne irgend eine Verbindung herum. Dass keine weiteren Dependencies da sind,
-  # ist ja auch eine Information)
 
-  #create network
-  # Achtung! Im treeDF kann man gut erkennen, wie es wirklich sein kann, dass
-  # z.b. Bei GREA zweimal shiny in den allPkgs ist, weil das halt von verschiedenen
-  # packages an verschiedenen Levels geladen wird. K.p. ob in solchen Fällen
-  # der netplot anders aussehen müsste. Als Quickfix habe ich erstmal unique
-  # genommen
   if(includerootpkg & !is.null(githublink)){
-    uniqueVertices <- unique(c(github_pkg, all_vertices)) # <- DAUERLÖSUNG??
+    uniqueVertices <- unique(c(github_pkg, all_vertices))
   } else {
-    uniqueVertices <- unique(all_vertices) # <- DAUERLÖSUNG??
+    uniqueVertices <- unique(all_vertices)
   }
 
 
@@ -132,6 +115,4 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   mtext(paste("Please enlarge this plot. Number of packages: ",length(all_vertices)), side=1, line=0, adj=1, cex=0.75)
 }
 
-#plotdstr(pkg = frst, recursive = T, includebasePkgs = F)
-#plotdstr(pkg = c("miniCRAN", "ggplot2"), recursive = T, includebasePkgs = F)
-#plotdstr("Stan125/GREA")
+
