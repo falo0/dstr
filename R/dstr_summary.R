@@ -14,7 +14,7 @@
 #' @param includebasepkgs Whether to include base packages in the analysis.
 #' @export
 
-dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
+dstr_summary <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
 
   writeLines("Loading...\n")
 
