@@ -5,16 +5,15 @@ output:
     keep_md: TRUE
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## Package Description
 
 dstr's goal is to reveal the dependency structure of one or several given package/s. E.g. it helps to find out which packages are eventually required (all dependencies of dependencies of...), how they are connected, and how easy or hard it would be to remove certain packages from the dependency structure completely.
 
 ## Setup
-```{r, eval = FALSE}
+
+```r
 library(devtools)
 install_github("falo0/dstr")
 library(dstr)
@@ -23,7 +22,8 @@ library(dstr)
 Use Case: The dependency structure of a package in the current working directory
 has to be analyzed
 
-```{r eval = FALSE}
+
+```r
 dstr()
 plotdstr()
 dstr_data(outtype = "all")
@@ -31,7 +31,8 @@ dstr_data(outtype = "all")
 
 Use Case: The dependency structure of a package on github has to be analyzed.
 Accepting multiple gihub link formats
-```{r eval = FALSE}
+
+```r
 dstr("Stan125/GREA")
 plotdstr("https://github.com/Stan125/GREA")
 View(dstr_data("https://github.com/Stan125/GREA/blob/master/DESCRIPTION",
@@ -40,7 +41,8 @@ View(dstr_data("https://github.com/Stan125/GREA/blob/master/DESCRIPTION",
 
 Use Case: The dependency structure of one or several packages on CRAN have to
 be analyzed, including base packages
-```{r eval = FALSE}
+
+```r
 dstr(pkg = "ggplot2", includebasepkgs = T)
 plotdstr(pkg = "ggplot2", includebasepkgs = T)
 View(dstr_data(pkg = "ggplot2", outtype = "tree", includebasepkgs = T))
@@ -48,14 +50,16 @@ View(dstr_data(pkg = "ggplot2", outtype = "tree", includebasepkgs = T))
 
 Use Case: What would happen to the dependency structure, if a certain package
 on github would also depend on some more CRAN packages?
-```{r eval = FALSE}
+
+```r
 dstr("Stan125/GREA", pkg = c("astro", "celestial"))
 plotdstr("Stan125/GREA", pkg = c("astro", "celestial"))
 ```
 
 Use Caes: The user wants certain data about the dependency structure to use
 for his own analysis
-```{r eval = FALSE}
+
+```r
 data <- dstr_data("Stan125/GREA",
                   outtype = c("root", "lvl1", "all",
                               "tree", "list", "unique", "unique2",
