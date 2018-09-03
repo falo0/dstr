@@ -1,12 +1,13 @@
 ---
-title: "dstr - Dependency Structure Analysis"
 output: github_document
 ---
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# dstr - Dependency Structure Analysis
 ## Package Description
 
 dstr's goal is to reveal the dependency structure of one or several given package/s. E.g. it helps to find out which packages are eventually required (all dependencies of dependencies of...), how they are connected, and how easy or hard it would be to remove certain packages from the dependency structure completely.
