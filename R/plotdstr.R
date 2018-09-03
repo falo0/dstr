@@ -35,8 +35,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
 
 
   #Create the edgelists
-  if((includerootpkg & !is.null(githublink)) |
-     (includerootpkg & is.null(githublink) & is.null(pkg))){
+  if(includerootpkg){
     # Use either a package on github or in the current working directory
     data <- dstr_data(githublink = githublink, pkg = pkg, recursive = recursive,
                        includebasepkgs = includebasepkgs,
@@ -45,7 +44,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
     # In case the package in the current working directory is used (because
     # neither githublink nor pkg were set), further behavior should be as if
     # a githublink was set.
-    githublink <- "Not NULL"
+    # githublink <- "Not NULL"
   } else {
     data <- dstr_data(githublink = githublink, pkg = pkg, recursive = recursive,
                       includebasepkgs = includebasepkgs,
@@ -57,7 +56,8 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   names(all_edges) <- c("start.vertex", "end.vertex")
   firstlvl_vertices <- data[[3]]
   github_pkg <- data[[4]]
-  if(includerootpkg & !is.null(githublink)){
+
+  if(includerootpkg){
     all_vertices <- c(github_pkg, data[[2]])
   } else {
     all_vertices <- data[[2]]
@@ -76,7 +76,7 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   firstlvl_vertices_cran <- all_edges$end.vertex[which(all_edges$firstlevel ==T)]
 
 
-  if(includerootpkg & !is.null(githublink)){
+  if(includerootpkg){
     uniqueVertices <- unique(c(github_pkg, all_vertices))
   } else {
     uniqueVertices <- unique(all_vertices)
