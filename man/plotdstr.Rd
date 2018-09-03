@@ -8,10 +8,16 @@ plotdstr(githublink = NULL, pkg = NULL, includebasepkgs = F,
   recursive = T, includerootpkg = T)
 }
 \arguments{
-\item{githublink}{A link to a github repository of an R package}
+\item{githublink}{A link to a github repository of an R package.}
 
-\item{pkg}{A vector of packages from which we want to know the further
-dependencies.}
+\item{pkg}{Character vector of CRAN package name/s you want to see the
+dependencies of. In the case that githublink is also set, the github package
+is considered as the root package and the packages provided
+by the pkg parameter are considered to be first level packages, e.g. on
+the same level as the packages in the DESCRIPTION file of the github package.
+This is to help answer the question "How would the dependency structure change
+if the package on github would also depend on a few more packages (provided by
+the pkg parameter)?".}
 
 \item{includebasepkgs}{Whether to include base packages in the analysis.}
 
@@ -20,10 +26,8 @@ dependencies.}
 \item{includerootpkg}{Whether to include the root package in the plot.}
 }
 \description{
-This function plots the dependency structur of one or more packages.
-}
-\details{
-The default assumption is that there is an R package in the current working
+This function plots the dependency structur of one or more packages. The default
+assumption is that there is an R package in the current working
 directory and that the dependencies to be analyzed are given in the DESCRIPTION
 file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
 to be analyzed.
@@ -34,4 +38,8 @@ for those graphs can be overlapping of the vertex labels. If this is the case
 the authors suggest to use dstr_data for creating either a network object
 which layout options can be modified for plotting or an edgelist, which can be used in
 combination with other packages such 'qgraph' or 'ggnet2'.
+}
+\examples{
+plotdstr(githublink = "tidyverse/ggplot2",
+      pkg = c("astro", "celestial"))
 }

@@ -4,25 +4,25 @@
 \name{dstr_package}
 \alias{dstr_package}
 \alias{dstr_package-package}
-\title{dstr: A package for package dependency structure analysis.}
+\title{dstr: Package dependency structure analysis}
 \description{
-The dstr package provides 4 functions:
-- dstr()
-- dstr_data()
-- plotdstr()
-- edges2tree()
+dstr's goal is to reveal the dependency structure of one or seceral given
+package/s. E.g. it helps to find out which packages are eventually required
+(all dependencies of dependencies of...), how they are connected, and how
+easy or hard it would be to remove certain packages from the dependency
+structure completely.
 }
 \details{
-With these functions it is possible to detect unnecessary loaded packages or
-shared dependencies between packages.
+The dstr package provides 4 functions:
 
--plotdstr() provides a dependency graph to the user.
+- dstr() gives a console output which shows the user descriptive information
+about the dependency structure as well as opportunities to reduce dependencies.
 
--dstr_data() delivers different data outputs of package dependencies.
+- plotdstr() provides a dependency graph to the user.
 
--dstr() is some kind of summary function which shows the user optimization
-possibilities for his package regarding dependencies.
+- dstr_data() delivers different data outputs of package dependencies.
 
--edges2tree transforms an edgelist into a tree data.frame. This is sometimes
-more useful in understanding the sequence of loading the packages.
+- edges2tree() transforms an edgelist into a data.frame that represents a tree
+structure. This is sometimes more useful in understanding the sequence in which
+the packages are loaded.
 }

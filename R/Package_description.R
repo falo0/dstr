@@ -1,23 +1,23 @@
-#' dstr: A package for package dependency structure analysis.
+#' dstr: Package dependency structure analysis
+#'
+#' dstr's goal is to reveal the dependency structure of one or seceral given
+#' package/s. E.g. it helps to find out which packages are eventually required
+#' (all dependencies of dependencies of...), how they are connected, and how
+#' easy or hard it would be to remove certain packages from the dependency
+#' structure completely.
 #'
 #' The dstr package provides 4 functions:
-#' - dstr()
-#' - dstr_data()
-#' - plotdstr()
-#' - edges2tree()
 #'
-#' With these functions it is possible to detect unnecessary loaded packages or
-#' shared dependencies between packages.
+#' - dstr() gives a console output which shows the user descriptive information
+#' about the dependency structure as well as opportunities to reduce dependencies.
 #'
-#' -plotdstr() provides a dependency graph to the user.
+#' - plotdstr() provides a dependency graph to the user.
 #'
-#' -dstr_data() delivers different data outputs of package dependencies.
+#' - dstr_data() delivers different data outputs of package dependencies.
 #'
-#' -dstr() is some kind of summary function which shows the user optimization
-#' possibilities for his package regarding dependencies.
-#'
-#' -edges2tree transforms an edgelist into a tree data.frame. This is sometimes
-#' more useful in understanding the sequence of loading the packages.
+#' - edges2tree() transforms an edgelist into a data.frame that represents a tree
+#' structure. This is sometimes more useful in understanding the sequence in which
+#' the packages are loaded.
 #'
 #'
 #' @docType package

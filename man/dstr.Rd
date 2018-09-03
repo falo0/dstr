@@ -2,26 +2,33 @@
 % Please edit documentation in R/dstr.R
 \name{dstr}
 \alias{dstr}
-\title{Dependency Summary}
+\title{Dependency Summary (Console Output)}
 \usage{
 dstr(githublink = NULL, pkg = NULL, includebasepkgs = F)
 }
 \arguments{
 \item{githublink}{A link to a github repository of an R package.}
 
-\item{pkg}{A list of packages from which we want to know the further
-dependencies. This list will be added to the first level dependencies
-of a given package on github it githublink is set.}
+\item{pkg}{Character vector of CRAN package name/s you want to see the
+dependencies of. In the case that githublink is also set, the github package
+is considered as the root package and the packages provided
+by the pkg parameter are considered to be first level packages, e.g. on
+the same level as the packages in the DESCRIPTION file of the github package.
+This is to help answer the question "How would the dependency structure change
+if the package on github would also depend on a few more packages (provided by
+the pkg parameter)?".}
 
 \item{includebasepkgs}{Whether to include base packages in the analysis.}
 }
 \description{
 This function gives a summary of the dependency structure of a given package
-and points out opportunities to eliminate depdendenceis completely.
-}
-\details{
-The default assumption is that there is an R package in the current working
+and points out opportunities to eliminate depdendencies completely. The default
+assumption is that there is an R package in the current working
 directory and that the dependencies to be analyzed are given in the DESCRIPTION
 file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
 to be analyzed.
+}
+\examples{
+dstr(githublink = "tidyverse/ggplot2",
+     pkg = c("astro", "celestial"), includebasepkgs = TRUE)
 }

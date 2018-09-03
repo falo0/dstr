@@ -1,55 +1,83 @@
-#' Get All Deeper Level Dependencies
+#' Get Various Aspects Of The Dependency Structure In The Form Of Vectors, Lists And Data.Frames
 #'
-#' Function takes package names as input and searches for their package
-#' dependencies. It returns the dependencies and dependencies of further
-#' dependencies. There are various options for the type of the output.It
-#' is poosible to select more than one outtype. This results in a list
-#' with each element one defined outtype.The default assumption is that there is
+#' This function returns certain information about the dependency structure of
+#' the package/s to be analyzed in the form of vectors, lists and data.frames.
+#' The different aspects of the dependency structure are provided by 11 different
+#' output types (set by the parameter 'outtypes', see description below).
+#' The default assumption is that there is
 #' an R package in the current working directory and that the dependencies to be
 #' analyzed are given in the DESCRIPTION file. Use the parameters ‘githublink’
 #' and/or 'pkg' to alter the package/s to be analyzed.
 #' @param githublink A link to a github repository of an R package.
-#' @param pkg Character input of a packagename you want to see the
-#' dependencies of. Multiple input packages can be given in vector format.
-#' This option is still valid in case of a of a given githublink.
+#' @param pkg Character vector of CRAN package name/s you want to see the
+#' dependencies of. In the case that githublink is also set, the github package
+#' is considered as the root package and the packages provided
+#' by the pkg parameter are considered to be first level packages, e.g. on
+#' the same level as the packages in the DESCRIPTION file of the github package.
+#' This is to help answer the question "How would the dependency structure change
+#' if the package on github would also depend on a few more packages (provided by
+#' the pkg parameter)?".
 #' @param outtype Possible output types:
+#'
+#' Key data about the dependency structure:
 #' \itemize{
-#' \item edgelist: An edge list, e.g. to be used for network plots.
-#' \item edgelist2: An edge list, e.g. to be used for network plots, including
-#' the root package itself when using a githublink.
-#' \item all: An overview of all packages that are eventually loaded. No further
-#' structure visible.
-#' \item network: An igraph network object which can directly be plotted.
-#' \item list: More detailed than all, it's a list tha containns all packages per
+#' \item 'root': The name of the package/s that the analysis is about (level 0
+#' in the dependency tree)
+#' \item 'lvl1': The dependencies that are given under "Imports:" or "Depends:" in
+#' the DESCRIPTION file of the root packge/s (level 1 in the dependency tree).
+#' They are also referred to as first level depdencies or first level packages.
+#' Dependencies of dependencies of ... (deeper level dependencies), which are
+#' not in the DESCRIPTION file, are NOT included.
+#' \item 'all': An overview of all packages that are eventually loaded (all levels).
+#' No further structure visible.
+#' \item 'tree': Detailed information about which package depends on which, represented
+#' in a data frame that is showing a tree structure.
+#' }
+#' Dependencies per first level dependency:
+#' \itemize{
+#' \item 'list': More detailed than 'all', it's a list that containns all packages per
 #' first level dependency.
-#' \item list2: like 'list' but the first level dependencies are not only
+#' \item 'list2': like 'list' but the first level dependencies are not only
 #' used for the names of the list elements but also included in the list elements
-#' \item unique: like 'list', just excluding all packages, that are eventually
-#' also loaded by another package in firstlvldep. This way you can see which
+#' \item 'unique': like 'list', just excluding all packages, that are eventually
+#' also loaded by another first level package. This way you can see which
 #' dependencies will be removed completely if you remove a certain first level
 #' dependency (a package that you import).
-#' \item unique2: like unique, but each first level dependency
+#' \item 'unique2': like 'unique', but each first level dependency
 #' is included in the corresponding list element IF it is a unique dependency.
-#' \item tree: Detailed information about which package depends on which, represented
-#' in a data frame that is showing a tree structure.
-#' \item lvl1: The vector of packages used as input. This is a combination
-#' when both the githublink and the pkg parameter are set.
-#' \item root: Whether to include the name of the package of the given
-#' github link. Returns "Root Package" when no github link was given.
+#' E.g. If a certain first level dependency is a deeper level dependency from
+#' another first level dependency, the corresponding list entry will be
+#' character(0). This means that if you remove that certain first level dependency
+#' from your Imports/Depends in the DESCRIPTION file, you actually won't remove
+#' it from the whole dependency structure because another first level package
+#' still depends on it.
 #' }
+#' For plotting and network analysis:
+#' \itemize{
+#' \item edgelist: An edge list, e.g. to be used for network plots, including
+#' only level 1 and deeper level dependencies, not the root package/s.
+#' \item edgelist2: An edge list, e.g. to be used for network plots, including
+#' the root package/s.
+#' \item network: An igraph network object which can directly be plotted.
+#' }
+#'
 #' @param includebasepkgs Whether to include base packages in the analysis or not.
-#' @param recursive If TRUE dependencies of dependencies of ... are considered.
+#' @param recursive If FALSE dependencies of dependencies of ... are not considered.
 #'
 #' @examples
+#' # Using a package in the local working directory
+#' # setwd("path/to/package")
+#' # dstr_data(outtype = c("all", "tree"))
 #'
-#'network_object <- dstr_data(githublink= "tidyverse/ggplot2", pkg="dplyr",
-#' recursive = TRUE, includebasepkgs = FALSE, outtype = "network")
+#' # Using a package on github
+#' network_object <- dstr_data(githublink= "tidyverse/ggplot2", pkg="dplyr",
+#'  recursive = TRUE, includebasepkgs = FALSE, outtype = "network")
 #'
-#'#needs package igraph attached:
-#'#plot(network_object, edge.arrow.size = .1, edge.color="darkgrey",vertex.size = 10,
-#'#           vertex.shape = "circle",vertex.frame.color = "white", vertex.label.font= 1,
-#'#            vertex.label.color = "black", vertex.color = "white",edge.width = 1.5,
-#'#            layout = layout_with_fr)
+#' # needs package igraph attached:
+#' # plot(network_object, edge.arrow.size = .1, edge.color="darkgrey",vertex.size = 10,
+#' #           vertex.shape = "circle",vertex.frame.color = "white", vertex.label.font= 1,
+#' #            vertex.label.color = "black", vertex.color = "white",edge.width = 1.5,
+#' #            layout = layout_with_fr)
 #'
 #'
 #' @export

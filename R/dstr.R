@@ -1,18 +1,25 @@
-#' Dependency Summary
+#' Dependency Summary (Console Output)
 #'
 #' This function gives a summary of the dependency structure of a given package
-#' and points out opportunities to eliminate depdendenceis completely.
-#'
-#' The default assumption is that there is an R package in the current working
+#' and points out opportunities to eliminate depdendencies completely. The default
+#' assumption is that there is an R package in the current working
 #' directory and that the dependencies to be analyzed are given in the DESCRIPTION
 #' file. Use the parameters ‘githublink’ and/or 'pkg' to alter the package/s
 #' to be analyzed.
 #' @param githublink A link to a github repository of an R package.
-#' @param pkg A list of packages from which we want to know the further
-#' dependencies. This list will be added to the first level dependencies
-#' of a given package on github it githublink is set.
+#' @param pkg Character vector of CRAN package name/s you want to see the
+#' dependencies of. In the case that githublink is also set, the github package
+#' is considered as the root package and the packages provided
+#' by the pkg parameter are considered to be first level packages, e.g. on
+#' the same level as the packages in the DESCRIPTION file of the github package.
+#' This is to help answer the question "How would the dependency structure change
+#' if the package on github would also depend on a few more packages (provided by
+#' the pkg parameter)?".
 #' @param includebasepkgs Whether to include base packages in the analysis.
 #' @export
+#' @examples
+#' dstr(githublink = "tidyverse/ggplot2",
+#'      pkg = c("astro", "celestial"), includebasepkgs = TRUE)
 
 dstr <- function(githublink = NULL, pkg = NULL, includebasepkgs = F){
 
