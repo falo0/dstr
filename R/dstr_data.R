@@ -62,7 +62,8 @@
 #' }
 #'
 #' @param includebasepkgs Whether to include base packages in the analysis or not.
-#' @param recursive If FALSE dependencies of dependencies of ... are not considered.
+#' @param recursive If TRUE, the outputs go no deeper than level 3. The default
+#' of FALSE is probably the desired output in most cases.
 #'
 #' @examples
 #' # Using a package in the local working directory

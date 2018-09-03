@@ -65,7 +65,8 @@ the root package/s.
 
 \item{includebasepkgs}{Whether to include base packages in the analysis or not.}
 
-\item{recursive}{If FALSE dependencies of dependencies of ... are not considered.}
+\item{recursive}{If TRUE, the outputs go no deeper than level 3. The default
+of FALSE is probably the desired output in most cases.}
 }
 \description{
 This function returns certain information about the dependency structure of
