@@ -1,6 +1,6 @@
 Package: dstr
 Title: Effectively reducing package dependencies in own R projects
-Version: 0.1.0
+Version: 1.0
 Authors@R: c(
 	person("Olaf", "Menssen", email = "o.menssen@me.com", role = c("aut", "cre")),
 	person("Christoph", "Albers", email = "albers.christoph@email.de", role = c("aut"))
