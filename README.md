@@ -6,7 +6,7 @@ dstr - Dependency Structure Analysis
 Package Description
 -------------------
 
-dstr's goal is to reveal the dependency structure of one or several given package/s. E.g. it helps to find out which packages are eventually required (all dependencies of dependencies of...), how they are connected, and how easy or hard it would be to remove certain packages from the dependency structure completely.
+dstr's goal is to reveal the dependency structure of one or several given R package/s. E.g. it helps to find out which packages are eventually required (all dependencies of dependencies of...), how they are connected, and how easy or hard it would be to remove certain packages from the dependency structure completely.
 
 Setup
 -----
@@ -73,3 +73,89 @@ data$edgelist
 data$edgelist2
 data$network
 ```
+
+Example Output
+--------------
+
+Text Summary:
+
+``` r
+dstr("tidyverse/tibble")
+```
+
+    ## Loading...
+    ## 
+    ## --- [dstr] DEPENDENCY STRUCTURE ANALYSIS OF 'tibble' ---
+    ## Base packages are ignored in this analysis.
+    ## 
+    ## 
+    ## First Level Dependencies (Packages Found In The DESCRIPTION File) (6)
+    ## --------------------------------------------------------------------------------
+    ## [1] "cli"       "crayon"    "fansi"     "pillar"    "pkgconfig" "rlang"    
+    ## 
+    ## 
+    ## All 8 Eventually Loaded Packages (Dependencies Of Dependencies Of...)
+    ## --------------------------------------------------------------------------------
+    ## [1] "cli"        "crayon"     "fansi"      "pillar"     "pkgconfig" 
+    ## [6] "rlang"      "assertthat" "utf8"      
+    ## 
+    ## 
+    ## Opportunities To Reduce Dependencies (Iterating Through All First Level Dependencies)
+    ## --------------------------------------------------------------------------------
+    ## If you remove 'pillar' you will remove the following 2 packages completely:
+    ## [1] "pillar" "utf8"  
+    ## 
+    ## 
+    ## If you remove 'pkgconfig' you will remove the following 1 package completely:
+    ## [1] "pkgconfig"
+    ## 
+    ## 
+    ## If you remove 'cli' you will remove 0 other packages and also not 'cli' istelf because it is a deeper level dependency from the following first level dependencies:
+    ## [1] "pillar"
+    ## 
+    ## 
+    ## If you remove 'crayon' you will remove 0 other packages and also not 'crayon' istelf because it is a deeper level dependency from the following first level dependencies:
+    ## [1] "cli"    "pillar"
+    ## 
+    ## 
+    ## If you remove 'fansi' you will remove 0 other packages and also not 'fansi' istelf because it is a deeper level dependency from the following first level dependencies:
+    ## [1] "pillar"
+    ## 
+    ## 
+    ## If you remove 'rlang' you will remove 0 other packages and also not 'rlang' istelf because it is a deeper level dependency from the following first level dependencies:
+    ## [1] "pillar"
+    ## 
+    ## 
+    ## Shared Dependencies / Hard To Remove
+    ## --------------------------------------------------------------------------------
+    ## 2 first level packages ('cli', pillar') depend on the following packages:
+    ## [1] "crayon"     "assertthat"
+
+Network Plot:
+
+``` r
+plotdstr("tidyverse/tibble")
+```
+
+    ## Loading...
+
+![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+Receiving specific information about the dependency structure. Use the help page (?dstr\_data) to see a description of all 11 possible outtypes.
+
+``` r
+dstr_data("tidyverse/ggplot2", outtype = c("root", "all"))
+```
+
+    ## $root
+    ## [1] "ggplot2"
+    ## 
+    ## $all
+    ##  [1] "digest"       "gtable"       "lazyeval"     "MASS"        
+    ##  [5] "mgcv"         "plyr"         "reshape2"     "rlang"       
+    ##  [9] "scales"       "tibble"       "viridisLite"  "withr"       
+    ## [13] "Matrix"       "nlme"         "lattice"      "Rcpp"        
+    ## [17] "stringr"      "glue"         "magrittr"     "stringi"     
+    ## [21] "labeling"     "munsell"      "R6"           "RColorBrewer"
+    ## [25] "colorspace"   "cli"          "crayon"       "pillar"      
+    ## [29] "assertthat"   "fansi"        "utf8"
