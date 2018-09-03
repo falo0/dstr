@@ -59,7 +59,6 @@
 dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
                       includebasepkgs = F, recursive = T){
 
-
   deplevels <- c("Imports","Depends")
 
   #read the list of base packages
@@ -69,6 +68,7 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
 
   bigmat <- utils::available.packages(repos= "https://cloud.r-project.org")
 
+  onlyPkg <- F
   if (is.null(githublink) & is.null(pkg)){
     # Neither githublink nor localdir were set
     # Assumption: The current working directory is the directory of an R package
@@ -94,10 +94,11 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
   } else {
     # only pkg is set. In all other cases, pkg was seen as level 1 packages
     # (on the same level as the dependencies in the description file of a package)
-    # now pkg has to be seen as the roo packages
+    # now pkg has to be seen as the root packages
+    onlyPkg <- T
     rootPkgName <- pkg
     pkg <- unique(unlist(tools::package_dependencies(pkg, recursive = F, which = deplevels, db=bigmat)))
-    github_firstlvl <- pkg
+    #github_firstlvl <- pkg
   }
 
   if(includebasepkgs == F){
@@ -173,9 +174,33 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
   }
 
   include_root_in_edgelist <- function(edgelist){
+    #edgelist <- result_df[,-3]
+
     if(is.null(rootPkgName)){
       return(edgelist)
+    }
+
+    if (onlyPkg){
+      # only the pkg parameter is set
+      result_df <- data.frame(matrix(ncol = 2, nrow = 0))
+      names(result_df) <- c("start", "end")
+      for(i in 1:length(rootPkgName)){
+
+        frstlvl <- unlist(tools::package_dependencies(rootPkgName[i],
+                                                      recursive = F, which = deplevels, db=bigmat))
+        firstlevel_frame <- data.frame("start" = rep(rootPkgName[i],
+                                                     length(frstlvl)), "end" = frstlvl)
+
+        result_df <- rbind(result_df, firstlevel_frame)
+      }
+
+      if(recursive == T){
+        result_df <- rbind(result_df, edgelist)
+      }
+      row.names(result_df) <- NULL
+
     } else {
+
       if (recursive == T){
         firstlevel_frame <- data.frame("start" = rep(rootPkgName,
                         length(github_firstlvl)), "end" = github_firstlvl)
@@ -185,8 +210,9 @@ dstr_data <- function(githublink = NULL, pkg = NULL, outtype,
         result_df <- data.frame("start" = rep(rootPkgName, length(github_firstlvl)),
                                 "end" = github_firstlvl)
       }
-      return(result_df)
+
     }
+    return(result_df)
   }
 
 

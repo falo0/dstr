@@ -93,7 +93,8 @@ plotdstr <- function(githublink= NULL, pkg=NULL, includebasepkgs = F, recursive 
   V(net)$label.cex <- 1
   V(net)$label.cex[which(V(net)$name %in% pkg)] <- 1.2
 
-  if (!is.null(githublink)){
+  #if (!is.null(githublink))
+  {
     V(net)$label.cex[which(V(net)$name %in% github_pkg)] <- 1.2
     V(net)$vcolor[which(V(net)$name %in% github_pkg)] <- "red"
   }
