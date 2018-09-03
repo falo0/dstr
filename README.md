@@ -1,65 +1,58 @@
----
-title: "dstr - Dependency Structure Analysis"
-output: 
-  html_document:
-    keep_md: TRUE
----
+dstr - Dependency Structure Analysis
+================
 
-
-
-## Package Description
+Package Description
+-------------------
 
 dstr's goal is to reveal the dependency structure of one or several given package/s. E.g. it helps to find out which packages are eventually required (all dependencies of dependencies of...), how they are connected, and how easy or hard it would be to remove certain packages from the dependency structure completely.
 
-## Setup
+Setup
+-----
 
-```r
+``` r
 library(devtools)
 install_github("falo0/dstr")
 library(dstr)
 ```
-## Usage
-Use Case: The dependency structure of a package in the current working directory
-has to be analyzed
 
+Usage
+-----
 
-```r
+Use Case: The dependency structure of a package in the current working directory has to be analyzed
+
+``` r
 dstr()
 plotdstr()
 dstr_data(outtype = "all")
 ```
 
-Use Case: The dependency structure of a package on github has to be analyzed.
-Accepting multiple gihub link formats
+Use Case: The dependency structure of a package on github has to be analyzed. Accepting multiple gihub link formats
 
-```r
+``` r
 dstr("Stan125/GREA")
 plotdstr("https://github.com/Stan125/GREA")
 View(dstr_data("https://github.com/Stan125/GREA/blob/master/DESCRIPTION",
                outtype = "tree"))
 ```
 
-Use Case: The dependency structure of one or several packages on CRAN have to
-be analyzed, including base packages
+Use Case: The dependency structure of one or several packages on CRAN have to be analyzed, including base packages
 
-```r
+``` r
 dstr(pkg = "ggplot2", includebasepkgs = T)
 plotdstr(pkg = "ggplot2", includebasepkgs = T)
 View(dstr_data(pkg = "ggplot2", outtype = "tree", includebasepkgs = T))
 ```
 
-Use Case: What would happen to the dependency structure, if a certain package
-on github would also depend on some more CRAN packages?
+Use Case: What would happen to the dependency structure, if a certain package on github would also depend on some more CRAN packages?
 
-```r
+``` r
 dstr("Stan125/GREA", pkg = c("astro", "celestial"))
 plotdstr("Stan125/GREA", pkg = c("astro", "celestial"))
 ```
 
-Use Caes: The user wants certain data about the dependency structure to use
-for his own analysis
+Use Caes: The user wants certain data about the dependency structure to use for his own analysis
 
-```r
+``` r
 data <- dstr_data("Stan125/GREA",
                   outtype = c("root", "lvl1", "all",
                               "tree", "list", "unique", "unique2",
