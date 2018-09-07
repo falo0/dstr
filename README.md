@@ -6,7 +6,7 @@ dstr - Dependency Structure Analysis
 Package Description
 -------------------
 
-dstr's goal is to reveal the dependency structure of one or several given R package/s. E.g. it helps to find out which packages are eventually required (all dependencies of dependencies of...), how they are connected, and how easy or hard it would be to remove certain packages from the dependency structure completely.
+dstr reveals the dependency structure of one or several given R package/s. It is meant as a tool for package developers to see which packages are loaded beyond those in the DESCRIPTION file (all dependencies of dependencies of...), how dependencies are connected, and how easy or hard it would be to remove certain packages from the dependency structure completely. The last section of this README is example output.
 
 Setup
 -----
